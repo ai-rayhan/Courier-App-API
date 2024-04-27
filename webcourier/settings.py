@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'riders',
     'receiver',
     'branches',
-    'delivery_status'
+    'delivery_status',
+    'admin_settings'
 
 ]
 

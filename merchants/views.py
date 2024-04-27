@@ -73,11 +73,11 @@ def update_shop(request, pk):
     
 
 from rest_framework import generics
-from packages.models import Packages
-from packages.serializers import PackageSerializer
+from packages.models import Parcel
+from packages.serializers import ParcelSerializer
 
 class PackageList(generics.ListCreateAPIView):
-    serializer_class = PackageSerializer
+    serializer_class = ParcelSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -86,9 +86,9 @@ class PackageList(generics.ListCreateAPIView):
 
         # If delivery_status_id is provided in query params, filter by it
         if delivery_status_id is not None:
-            queryset = Packages.objects.filter(merchant_id=merchant_id, delivery_status_id=delivery_status_id)
+            queryset = Parcel.objects.filter(merchant_id=merchant_id, delivery_status_id=delivery_status_id)
         else:
-            queryset = Packages.objects.filter(merchant_id=merchant_id)
+            queryset = Parcel.objects.filter(merchant_id=merchant_id)
         
         return queryset
 

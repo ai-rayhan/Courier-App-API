@@ -5,7 +5,7 @@ from riders.models import Rider
 from branches.models import PickupZone,DeliveryZone
 from delivery_status.models import DeliveryStatus
 
-class Packages(models.Model):
+class Parcel(models.Model):
     id = models.BigAutoField(primary_key=True)
     merchant = models.ForeignKey(Merchant, on_delete=models.CASCADE)
     receiver = models.ForeignKey(Receiver, on_delete=models.CASCADE)
@@ -42,7 +42,7 @@ class Packages(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
-        db_table = 'packages'
+        db_table = 'parcel'
 
     def __str__(self):
         return self.voucher_id
@@ -57,3 +57,49 @@ class Issue(models.Model):
 
     class Meta:
         db_table = 'issues'
+
+
+
+class ParcelDetails(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    booking_id = models.ForeignKey(Parcel, on_delete=models.CASCADE)
+    date = models.DateField()
+    # client_id =  models.ForeignKey(Receiver, on_delete=models.CASCADE) ##Copy db field
+    # merchant_id =  models.ForeignKey(Merchant, on_delete=models.CASCADE) ##Copy db field
+    product_type = models.SmallIntegerField()
+
+    item_description = models.CharField(max_length=255, null=True, blank=True)
+    quantity = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    weight = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    height_left = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    height_right = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    length = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    width = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    height = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    created_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'parcel_details'
+
+
+
+class ReturnParcel(models.Model):
+    RETURN_STATUS_CHOICES = [
+        (0, 'Pending'),
+        (1, 'Received'),
+        (2, 'Assigned Driver'),
+        (3, 'Delivered'),
+    ]
+
+    id = models.BigAutoField(primary_key=True)
+    booking_id = models.IntegerField()
+    merchant_id = models.IntegerField()
+    client_id = models.IntegerField()
+    driver_id = models.IntegerField(null=True, blank=True)
+    return_status = models.SmallIntegerField(choices=RETURN_STATUS_CHOICES, default=0)
+    created_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'parcel_returns'

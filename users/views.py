@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.decorators import api_view,permission_classes
+from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -15,10 +15,23 @@ from webcourier.utility.custom_response import custom_response
 import os
 import random
 import requests
-from users.appdecorators import has_role
 from rest_framework import generics
+from .permissions import HasSpecificPermission,IsAdmin
 
 ############################# Authentication Section ######################
+
+@api_view(['POST'])
+def signup(request):
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid():
+        password = serializer.validated_data['password']
+        hashed_password = make_password(password) 
+        serializer.validated_data['password'] = hashed_password 
+        
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 def signin(request):
@@ -43,19 +56,6 @@ def signin(request):
             'status': False,
             'message': 'Invalid credentials'
         }, status=status.HTTP_401_UNAUTHORIZED)
-
-
-@api_view(['POST'])
-def signup(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        password = serializer.validated_data['password']
-        hashed_password = make_password(password) 
-        serializer.validated_data['password'] = hashed_password 
-        
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 ############################# Profile Section ######################
@@ -86,94 +86,7 @@ class UserProfileUpdate(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-####################################### Role Section  #################################
-class RoleList(generics.ListCreateAPIView):
-    queryset = Role.objects.all()
-    serializer_class = RoleSerializer    
-    # permission_classes = [IsAuthenticated]
-
-    
-class RoleDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Role.objects.all()
-    serializer_class = RoleSerializer
-    # permission_classes = [IsAuthenticated]
-
-
-# @api_view(['POST'])
-# def add_role(request):
-#     if request.method == 'POST':
-#         # if str(request.user.id)=='admin tpye id':
-#             # return custom_response(error="You are not authorized to perform this action.", status=status.HTTP_403_FORBIDDEN, success=False)
-        
-#         serializer = RoleSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return custom_response(data=serializer.data, status=status.HTTP_201_CREATED)
-#         return custom_response(error=serializer.errors, status=status.HTTP_400_BAD_REQUEST, success=False)
-    
-# @api_view(['PUT'])
-# @permission_classes([IsAuthenticated])
-# def update_role(request, pk):
-#     try:
-#         merchant = Role.objects.get(pk=pk)
-#     except Role.DoesNotExist:
-#         return custom_response(data="Not found.",status=status.HTTP_404_NOT_FOUND)
-
-#     if request.method == 'PUT':
-#         serializer = RoleSerializer(merchant, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return custom_response(data=serializer.data)
-#         return custom_response(error=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
-# class RoleListView(generics.ListAPIView):
-#     queryset = Role.objects.all()
-#     serializer_class = RoleSerializer
-
-
-####################################### Otp verification Section #################################
-
-# class SendOTP(APIView):
-#     def post(self, request):
-#         phone_number = request.data.get('phone_number')
-#         user = User.objects.filter(phone_number=phone_number).first()
-#         if not user:
-#             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-#         print(phone_number)
-#         otp = random.randint(100000, 999999)
-#         OTP.objects.create(user=user, otp=str(otp))
-
-#         # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-#         # message = client.messages.create(
-#         #     body=f'Your OTP is {otp}',
-#         #     from_=settings.TWILIO_PHONE_NUMBER,
-#         #     to=phone_number
-#         # )
-
-#         return Response({"message": "OTP sent successfully."}, status=status.HTTP_200_OK)
-
-
-class VerifyOTP(APIView):
-    def post(self, request):
-        phone_number = request.data.get('phone_number')
-        otp_provided = request.data.get('otp')
-        new_password = request.data.get('new_password')
-
-        user = User.objects.filter(phone_number=phone_number).first()
-        if not user:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        otp_record = OTP.objects.filter(user=user).order_by('-timestamp').first()
-        if otp_record and otp_record.is_valid() and otp_record.otp == otp_provided:
-            user.set_password(new_password)
-            user.save()
-            otp_record.delete()  # Clear OTP after use
-            return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
-        return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
-
+################################# OTP Section ###############################################
 
 class SendOTP(APIView):
     def post(self, request):
@@ -218,3 +131,93 @@ class SendOTP(APIView):
         else:
             return Response({"error": "Failed to send OTP"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+
+class VerifyOTP(APIView):
+    def post(self, request):
+        phone_number = request.data.get('phone_number')
+        otp_provided = request.data.get('otp')
+        new_password = request.data.get('new_password')
+
+        user = User.objects.filter(phone_number=phone_number).first()
+        if not user:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        otp_record = OTP.objects.filter(user=user).order_by('-timestamp').first()
+        if otp_record and otp_record.is_valid() and otp_record.otp == otp_provided:
+            user.set_password(new_password)
+            user.save()
+            otp_record.delete()  # Clear OTP after use
+            return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+        return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+####################################### Role Section  #################################
+class RoleList(generics.ListCreateAPIView):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer    
+    permission_classes = [IsAuthenticated, HasSpecificPermission,IsAdmin]
+    permission_codename = 'change_role'
+
+    
+class RoleDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer
+    permission_classes = [IsAuthenticated,HasSpecificPermission,IsAdmin]
+    permission_codename = 'change_role'
+
+
+# @api_view(['PUT'])
+# def update_role(request, pk):
+#     try:
+#         merchant = Role.objects.get(pk=pk)
+#     except Role.DoesNotExist:
+#         return custom_response(data="Not found.",status=status.HTTP_404_NOT_FOUND)
+
+#     if request.method == 'PUT':
+#         serializer = RoleSerializer(merchant, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return custom_response(data=serializer.data)
+#         return custom_response(error=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# class RoleListView(generics.ListAPIView):
+#     queryset = Role.objects.all()
+#     serializer_class = RoleSerializer
+
+
+####################################### Otp verification Section #################################
+
+# class SendOTP(APIView):
+#     def post(self, request):
+#         phone_number = request.data.get('phone_number')
+#         user = User.objects.filter(phone_number=phone_number).first()
+#         if not user:
+#             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+#         print(phone_number)
+#         otp = random.randint(100000, 999999)
+#         OTP.objects.create(user=user, otp=str(otp))
+
+#         # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+#         # message = client.messages.create(
+#         #     body=f'Your OTP is {otp}',
+#         #     from_=settings.TWILIO_PHONE_NUMBER,
+#         #     to=phone_number
+#         # )
+
+#         return Response({"message": "OTP sent successfully."}, status=status.HTTP_200_OK)
+
+
+
+# @api_view(['POST'])
+# def add_role(request):
+#     if request.method == 'POST':
+#         # if str(request.user.id)=='admin tpye id':
+#             # return custom_response(error="You are not authorized to perform this action.", status=status.HTTP_403_FORBIDDEN, success=False)
+        
+#         serializer = RoleSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return custom_response(data=serializer.data, status=status.HTTP_201_CREATED)
+#         return custom_response(error=serializer.errors, status=status.HTTP_400_BAD_REQUEST, success=False)
+

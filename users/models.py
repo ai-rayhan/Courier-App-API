@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
 from django.contrib.auth.models import Permission
+from django.db.models import Q
+
 
 
 class Role(models.Model):
@@ -69,11 +71,46 @@ class User(AbstractBaseUser):
         return self.email
 
     def has_perm(self, perm, obj=None):
-        # Check if the user's role has the specified permission
-        if self.is_admin:
-            return True
-        return False
+        """
+        Check if the user has a specific permission.
+        This method is called by Django's permission framework.
 
+        :param perm: The permission string, e.g., 'app_label.permission_codename'
+        :param obj: The object for which the permission is checked (optional)
+        :return: True if the user has the permission, False otherwise
+        """
+        # Superusers have all permissions
+        if self.is_superuser:
+            return True
+
+        # Check if any of the user's roles have the specified permission
+        if self.role:
+            # Use Q objects to build OR conditions for permissions
+            # This checks if any of the user's roles have the permission
+            if self.role.permissions.filter(Q(codename=perm) | Q(content_type__app_label=perm.split('.')[0])).exists():
+                return True
+
+        return False
+    def has_specific_perm(self, codename):
+        """
+        Check if the user has a specific permission (by codename).
+        This method is called to check for a specific permission.
+
+        :param codename: The codename of the permission, e.g., 'change_specific_role'
+        :return: True if the user has the permission, False otherwise
+        """
+        # Superusers have all permissions
+        if self.is_superuser:
+            return True
+
+        # Check if any of the user's roles have the specified permission
+        if self.role:
+            # Check if the role has the specific permission by codename
+            if self.role.permissions.filter(codename=codename).exists():
+                return True
+
+        return False
+    
     def has_module_perms(self, app_label):
         return True
     class Meta:

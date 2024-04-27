@@ -9,6 +9,8 @@ urlpatterns = [
     path('api/package/', include('packages.urls')),
     path('api/rider/', include('riders.urls')),
     path('api/receiver/', include('receiver.urls')),
+    path('api/deliverystatus/', include('delivery_status.urls')),
+    path('api/branch/', include('branches.urls')),
    
 ]
 

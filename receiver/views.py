@@ -2,7 +2,6 @@ from receiver.models import Receiver
 from receiver.serializers import ReciverSerializer
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from users.appdecorators import has_role
 
 class ReciverList(generics.ListCreateAPIView):
     queryset = Receiver.objects.all()

@@ -47,7 +47,10 @@ INSTALLED_APPS = [
     'bank',
     'packages',
     'riders',
-    'receiver'
+    'receiver',
+    'branches',
+    'delivery_status'
+
 ]
 
 MIDDLEWARE = [
@@ -108,18 +111,7 @@ DATABASES = {
         'sql_mode': 'traditional',
     }
     }
-    # 'default': {
-    #     'ENGINE': 'mysql.connector.django',
-    #     'NAME': 'courier_management',
-    #     'USER': 'root',
-    #     'PASSWORD': '',
-    #     'HOST': 'localhost',
-    #     'PORT': '3306',
-    #     'OPTIONS': {
-    #         'charset': 'utf8mb4',
-    #         'collation': 'utf8mb4_general_ci',
-    #     },
-    # }
+    
 
 }
 

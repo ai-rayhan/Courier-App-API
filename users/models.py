@@ -9,6 +9,7 @@ from django.db.models import Q
 
 class Role(models.Model):
     name = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     permissions = models.ManyToManyField(Permission, blank=True)
 
     def __str__(self):
@@ -60,6 +61,8 @@ class User(AbstractBaseUser):
     is_superuser =models.BooleanField(default=False)
     is_admin=models.BooleanField(default=False)
     is_staff=models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
 
     USERNAME_FIELD = 'email'

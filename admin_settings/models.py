@@ -3,8 +3,8 @@ from django.db import models
 class DeliveryTimes(models.Model):
     id = models.BigAutoField(primary_key=True)
     time_slot = models.CharField(max_length=255)
-    created_at = models.DateTimeField(null=True, blank=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         db_table = 'delivery_times'
@@ -14,8 +14,8 @@ class DeliveryTimes(models.Model):
 class ProductType(models.Model):
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=255)
-    created_at = models.DateTimeField(null=True, blank=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         db_table = 'product_types'
@@ -38,8 +38,8 @@ class DriverPayment(models.Model):
     total_cod = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     total_delivery_charge = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     total_commission = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    created_at = models.DateTimeField(null=True, blank=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         db_table = 'driver_payments'
@@ -61,8 +61,8 @@ class MerchantPayment(models.Model):
     total_charge = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     total_cod = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     total_parcel_amount = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    created_at = models.DateTimeField(null=True, blank=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         db_table = 'merchant_payments'

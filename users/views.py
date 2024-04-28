@@ -14,9 +14,9 @@ from .models import Role,User,OTP
 from webcourier.utility.custom_response import custom_response 
 import os
 import random
-import requests
+from webcourier.utility.otp_sender import OTPSender
 from rest_framework import generics
-from .permissions import HasSpecificPermission,IsAdmin
+from .permissions import HasSpecificPermission,IsAdmin,IsSuperUser
 
 ############################# Authentication Section ######################
 
@@ -99,23 +99,8 @@ class SendOTP(APIView):
         # Generate OTP
         otp = random.randint(100000, 999999)
         otp_str = str(otp)
-        
-        api_url = "http://bulksmsbd.net/api/smsapi"
-        api_key = 'ZwO6786JCSDjwbVR3TrB'  # Get API key from Django settings
-        senderid = '8809617617743'  # Get sender ID from Django settings
 
-        # Message format with placeholders for OTP
-        message = f"Your OTP is {otp_str}"
-
-        # Parameters for API request
-        params = {
-            "api_key": api_key,
-            "senderid": senderid,
-            "number": phone_number,
-            "message": message
-        }
-
-        response = requests.post(api_url, data=params)
+        response = OTPSender.send_otp(phone_number, otp_str)
         print(response.text)
         if response.status_code == 200:
             json_response = response.json()
@@ -155,16 +140,36 @@ class VerifyOTP(APIView):
 class RoleList(generics.ListCreateAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer    
-    permission_classes = [IsAuthenticated, HasSpecificPermission,IsAdmin]
+    permission_classes = [IsAuthenticated, HasSpecificPermission,IsAdmin,IsSuperUser]
     permission_codename = 'change_role'
 
     
 class RoleDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    permission_classes = [IsAuthenticated,HasSpecificPermission,IsAdmin]
+    permission_classes = [IsAuthenticated,HasSpecificPermission,IsAdmin,IsSuperUser]
     permission_codename = 'change_role'
 
+
+
+
+  
+        # api_url = "http://bulksmsbd.net/api/smsapi"
+        # api_key = 'ZwO6786JCSDjwbVR3TrB'  # Get API key from Django settings
+        # senderid = '8809617617743'  # Get sender ID from Django settings
+
+        # # Message format with placeholders for OTP
+        # message = f"Your OTP is {otp_str}"
+
+        # # Parameters for API request
+        # params = {
+        #     "api_key": api_key,
+        #     "senderid": senderid,
+        #     "number": phone_number,
+        #     "message": message
+        # }
+
+        # response = requests.post(api_url, data=params)
 
 # @api_view(['PUT'])
 # def update_role(request, pk):

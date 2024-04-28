@@ -76,8 +76,8 @@ class ParcelDetails(models.Model):
     length = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     width = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     height = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    created_at = models.DateTimeField(null=True, blank=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         db_table = 'parcel_details'
@@ -98,8 +98,8 @@ class ReturnParcel(models.Model):
     client_id = models.IntegerField()
     driver_id = models.IntegerField(null=True, blank=True)
     return_status = models.SmallIntegerField(choices=RETURN_STATUS_CHOICES, default=0)
-    created_at = models.DateTimeField(null=True, blank=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         db_table = 'parcel_returns'

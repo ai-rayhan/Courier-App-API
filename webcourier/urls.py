@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/deliverystatus/', include('delivery_status.urls')),
     path('api/branch/', include('branches.urls')),
     path('api/settings/', include('admin_settings.urls')),
+    path('api/accounts/', include('accounts.urls')),
    
 ]
 

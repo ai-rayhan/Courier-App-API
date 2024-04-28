@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'receiver',
     'branches',
     'delivery_status',
-    'admin_settings'
+    'admin_settings',
+    'accounts'
 
 ]
 
@@ -178,7 +179,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
-
+BULKSMS_API_KEY ='ZwO6786JCSDjwbVR3TrB'
+BULKSMS_SENDER_ID = '8809617617743'
+# BULKSMS_API_KEY = os.getenv("BULKSMS_API_KEY")
+# BULKSMS_SENDER_ID = os.getenv("BULKSMS_SENDER_ID")
 
 
 

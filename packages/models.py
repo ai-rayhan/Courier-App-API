@@ -4,6 +4,7 @@ from receiver.models import Receiver
 from riders.models import Rider
 from branches.models import PickupZone,DeliveryZone
 from delivery_status.models import DeliveryStatus
+from admin_settings.models import ProductType
 
 class Parcel(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -62,12 +63,11 @@ class Issue(models.Model):
 
 class ParcelDetails(models.Model):
     id = models.BigAutoField(primary_key=True)
-    booking_id = models.ForeignKey(Parcel, on_delete=models.CASCADE)
+    parcel = models.ForeignKey(Parcel, on_delete=models.CASCADE)
     date = models.DateField()
     # client_id =  models.ForeignKey(Receiver, on_delete=models.CASCADE) ##Copy db field
     # merchant_id =  models.ForeignKey(Merchant, on_delete=models.CASCADE) ##Copy db field
-    product_type = models.SmallIntegerField()
-
+    product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE,blank=True,null=True)
     item_description = models.CharField(max_length=255, null=True, blank=True)
     quantity = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     weight = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)

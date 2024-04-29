@@ -10,17 +10,19 @@ class DeliveryTimes(models.Model):
         db_table = 'delivery_times'
 
 
-
+#Reference: https://chat.openai.com/share/3e1d43fe-5337-4f44-bedf-8c3422f2b7cb
 class ProductType(models.Model):
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=255)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         db_table = 'product_types'
 
-
+    def __str__(self):
+        return self.title
 
 
 class DriverPayment(models.Model):

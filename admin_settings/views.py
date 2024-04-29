@@ -15,7 +15,7 @@ class DeliveryTimesDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ProductTypeList(generics.ListCreateAPIView):
-    queryset = ProductType.objects.all()
+    queryset = ProductType.objects.filter(parent=None)
     serializer_class = ProductTypeSerializer
     permission_classes = [IsAuthenticated]
 

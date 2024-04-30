@@ -48,9 +48,10 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     phone_regex = RegexValidator( regex=r'^\+?1?\d{9,15}$',message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+
     email = models.EmailField(verbose_name="email", max_length=255, unique=True,validators=[EmailValidator(message="Enter a valid email address.")])
-    username = models.CharField(max_length=255, unique=True, validators=[phone_regex])
-    phone_number = models.CharField(max_length=255, unique=True)
+    username = models.CharField(max_length=255, unique=True,)
+    phone_number = models.CharField(max_length=255, unique=True,validators=[phone_regex])
     role =models.ForeignKey(Role, on_delete=models.CASCADE,blank=True,null=True)
     full_name = models.CharField(max_length=255, blank=True)
     photo = models.ImageField(upload_to='profile_photos/', blank=True)

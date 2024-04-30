@@ -16,7 +16,7 @@ import os
 import random
 from webcourier.utility.otp_sender import OTPSender
 from rest_framework import generics
-from .permissions import HasSpecificPermission,IsAdmin,IsSuperUser
+from webcourier.permissions import HasSpecificPermission,IsAdmin,IsSuperUser
 
 ############################# Authentication Section ######################
 

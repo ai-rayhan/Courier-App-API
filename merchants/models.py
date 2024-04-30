@@ -6,13 +6,16 @@ class Merchant(models.Model):
     merchant_name = models.CharField(max_length=100)
     bussiness_contact_info = models.CharField(max_length=100)
     bussiness_address = models.CharField(max_length=100)
-    is_approved=models.BooleanField(default=False,blank=True,null=True)
-    is_active=models.BooleanField(default=True,blank=True,null=True)
+    soft_delete=models.BooleanField(default=False,blank=True,null=True)
+    is_reviewed=models.BooleanField(default=False,blank=True,null=True)
+    is_active=models.BooleanField(default=False,blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
         return self.merchant_name
+    class Meta:
+       db_table = 'merchants'
     
 
 class Shops(models.Model):

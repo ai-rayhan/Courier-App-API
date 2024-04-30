@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'users',
     'merchants',
     'bank',
-    'packages',
+    'parcels',
     'riders',
     'receiver',
     'branches',

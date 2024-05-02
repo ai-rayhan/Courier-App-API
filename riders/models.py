@@ -10,8 +10,8 @@ class Rider(models.Model):
     vehicle_type = models.CharField(max_length=255)
     registration_number = models.CharField(max_length=255)
     rider_commission = models.FloatField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
+    updated_at = models.DateTimeField(auto_now=True,null=True)
 
     def __str__(self):
         return self.full_name

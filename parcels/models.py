@@ -2,13 +2,16 @@ from django.db import models
 from merchants.models import Merchant
 from receiver.models import Receiver
 from riders.models import Rider
+from django.conf import settings 
 from branches.models import PickupZone,DeliveryZone
 from delivery_status.models import DeliveryStatus
 from admin_settings.models import ProductType
+from datetime import datetime
 
 class Parcel(models.Model):
     id = models.BigAutoField(primary_key=True)
     merchant = models.ForeignKey(Merchant, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,null=True)
     receiver = models.ForeignKey(Receiver, on_delete=models.CASCADE)
     pickup_driver = models.ForeignKey(Rider, on_delete=models.CASCADE,related_name='pickup_packages',null=True ,blank=True)
     driver= models.ForeignKey(Rider, on_delete=models.CASCADE,related_name='delivery_packages',null=True ,blank=True)
@@ -20,7 +23,7 @@ class Parcel(models.Model):
     payment_status = models.SmallIntegerField(default=1,help_text='0=pending and 1=payment')
     driver_payment_status = models.SmallIntegerField(default=1,help_text='0=pending and 1=payment')
    
-    voucher_id = models.CharField(max_length=30)
+    voucher_id = models.CharField(max_length=30,blank=True)
     delivery_charge = models.DecimalField(max_digits=8, decimal_places=2)
     delivery_address = models.TextField()
     pickup_address = models.TextField(null=True, blank=True)
@@ -41,6 +44,13 @@ class Parcel(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        today_date = datetime.today().strftime('%Y%m%d')
+        today_parcels_count = Parcel.objects.filter(voucher_id__startswith=f'NE-{today_date}').count()
+        unique_id = today_parcels_count + 1
+        self.voucher_id = f'NE-{today_date}{unique_id}'
+        super().save(*args, **kwargs)
 
     class Meta:
         db_table = 'parcel'

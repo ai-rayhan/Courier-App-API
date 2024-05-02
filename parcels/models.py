@@ -77,7 +77,7 @@ class ParcelDetails(models.Model):
     date = models.DateField()
     # client_id =  models.ForeignKey(Receiver, on_delete=models.CASCADE) ##Copy db field
     # merchant_id =  models.ForeignKey(Merchant, on_delete=models.CASCADE) ##Copy db field
-    product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE,blank=True,null=True)
+    product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE)
     item_description = models.CharField(max_length=255, null=True, blank=True)
     quantity = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     weight = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
@@ -95,19 +95,13 @@ class ParcelDetails(models.Model):
 
 
 class ReturnParcel(models.Model):
-    RETURN_STATUS_CHOICES = [
-        (0, 'Pending'),
-        (1, 'Received'),
-        (2, 'Assigned Driver'),
-        (3, 'Delivered'),
-    ]
-
+ 
     id = models.BigAutoField(primary_key=True)
-    booking_id = models.IntegerField()
-    merchant_id = models.IntegerField()
-    client_id = models.IntegerField()
-    driver_id = models.IntegerField(null=True, blank=True)
-    return_status = models.SmallIntegerField(choices=RETURN_STATUS_CHOICES, default=0)
+    parcel =  models.ForeignKey(Parcel, on_delete=models.CASCADE)
+    merchant =  models.ForeignKey(Merchant, on_delete=models.CASCADE)
+    receiver =  models.ForeignKey(Receiver, on_delete=models.CASCADE)
+    driver =  models.ForeignKey(Rider, on_delete=models.CASCADE)
+    return_status =  models.ForeignKey(DeliveryStatus, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 

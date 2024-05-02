@@ -97,10 +97,10 @@ class ParcelDetails(models.Model):
 class ReturnParcel(models.Model):
  
     id = models.BigAutoField(primary_key=True)
-    parcel =  models.ForeignKey(Parcel, on_delete=models.CASCADE)
-    merchant =  models.ForeignKey(Merchant, on_delete=models.CASCADE)
-    receiver =  models.ForeignKey(Receiver, on_delete=models.CASCADE)
-    driver =  models.ForeignKey(Rider, on_delete=models.CASCADE)
+    parcel =  models.ForeignKey(Parcel, on_delete=models.CASCADE,null= True)
+    merchant =  models.ForeignKey(Merchant, on_delete=models.CASCADE,null= True)
+    receiver =  models.ForeignKey(Receiver, on_delete=models.CASCADE,null= True)
+    driver =  models.ForeignKey(Rider, on_delete=models.CASCADE,null= True)
     return_status =  models.ForeignKey(DeliveryStatus, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)

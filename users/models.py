@@ -1,7 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-
-
 from django.contrib.auth.models import Permission
 from django.db.models import Q
 from django.core.validators import EmailValidator,RegexValidator

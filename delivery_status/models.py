@@ -1,11 +1,6 @@
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.db import models
-
-def validate_image(image):
-    # Ensure image has a 1:1 aspect ratio
-    if image.width != image.height:
-        raise ValidationError("Image must have a 1:1 aspect ratio.")
+from webcourier.utility.small_image_validator import validate_image
     
 class DeliveryStatus(models.Model):
     id = models.BigAutoField(primary_key=True)

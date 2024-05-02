@@ -16,7 +16,7 @@ import os
 import random
 from webcourier.utility.otp_sender import OTPSender
 from rest_framework import generics
-from webcourier.permissions import HasSpecificPermission,IsAdmin,IsSuperUser
+from webcourier.permissions import HasSpecificPermission,IsSiteAdmin,IsSuperUser
 
 ############################# Authentication Section ######################
 
@@ -140,14 +140,14 @@ class VerifyOTP(APIView):
 class RoleList(generics.ListCreateAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer    
-    permission_classes = [IsAuthenticated, HasSpecificPermission,IsAdmin,IsSuperUser]
+    permission_classes = [IsAuthenticated,IsSuperUser]
     permission_codename = 'change_role'
 
     
 class RoleDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    permission_classes = [IsAuthenticated,HasSpecificPermission,IsAdmin,IsSuperUser]
+    permission_classes = [IsAuthenticated,IsSuperUser]
     permission_codename = 'change_role'
 
 

@@ -6,7 +6,10 @@ class CanUpdateParcelPermission(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        # Check if the delivery status of the parcel is greater than 5
+
+        if request.user and (request.user.is_superuser or request.user.is_admin):
+            return True
+        
         if obj.delivery_status_id < 1:
             # print("Delivery Status Id:"+ obj.delivery_status_id)
             return True

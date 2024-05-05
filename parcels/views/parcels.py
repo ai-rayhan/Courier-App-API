@@ -1,5 +1,5 @@
 from parcels.models import Parcel
-from parcels.serializers import ParcelSerializer
+from parcels.serializers import ParcelSerializer,RiderParcelSerializer
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from parcels.permissions import CanUpdateParcelPermission
@@ -15,6 +15,11 @@ class ParcelDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Parcel.objects.all()
     serializer_class = ParcelSerializer
     permission_classes = [IsAuthenticated,CanUpdateParcelPermission]
+
+class RiderParcelUpdate(generics.UpdateAPIView):
+    queryset = Parcel.objects.all()
+    serializer_class = RiderParcelSerializer
+    permission_classes = [IsAuthenticated]
 
 ####### Custom view #######
 from rest_framework import status

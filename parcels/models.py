@@ -4,9 +4,9 @@ from receiver.models import Receiver
 from riders.models import Rider
 from django.conf import settings 
 from branches.models import PickupZone,DeliveryZone
-from delivery_status.models import DeliveryStatus
 from admin_settings.models import ProductType
 from datetime import datetime
+from admin_settings.views.delivery_status import DeliveryStatus
 
 class Parcel(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -59,18 +59,6 @@ class Parcel(models.Model):
         return self.voucher_id
 
 
-
-class Issue(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    title = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
-
-    class Meta:
-        db_table = 'issues'
-
-
-
 class ParcelDetails(models.Model):
     id = models.BigAutoField(primary_key=True)
     parcel = models.ForeignKey(Parcel, on_delete=models.CASCADE)
@@ -94,6 +82,21 @@ class ParcelDetails(models.Model):
 
 
 
+class StatusTracking(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    parcel = models.ForeignKey("parcels.Parcel", on_delete=models.CASCADE)
+    # date = models.DateField()
+    status = models.ForeignKey(DeliveryStatus, on_delete=models.CASCADE)
+    # status_mode = models.CharField(max_length=255)
+    note = models.CharField(max_length=255, null=True, blank=True)
+    # driver_id = models.IntegerField(null=True, blank=True)
+    created_by = models.CharField(max_length=55)
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
+    updated_at = models.DateTimeField(auto_now=True,null=True)
+
+    class Meta:
+        db_table = 'status_trackings'
+
 class ReturnParcel(models.Model):
  
     id = models.BigAutoField(primary_key=True)
@@ -107,3 +110,14 @@ class ReturnParcel(models.Model):
 
     class Meta:
         db_table = 'parcel_returns'
+
+
+class Issue(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    title = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    class Meta:
+        db_table = 'issues'
+

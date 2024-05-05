@@ -6,7 +6,7 @@ from parcels.permissions import CanUpdateParcelPermission
 from rest_framework import mixins
 from rest_framework import generics
 
-from delivery_status.models import StatusTracking
+from parcels.models import StatusTracking
 class ParcelList(generics.ListCreateAPIView):
     queryset = Parcel.objects.all()
     serializer_class = ParcelSerializer

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import DeliveryTimes,ProductType,DriverPayment,MerchantPayment
+from .models import DeliveryTimes,ProductType,DeliveryStatus
 
 class DeliveryTimesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,11 +18,7 @@ class ProductTypeSerializer(serializers.ModelSerializer):
         serializer = ProductTypeSerializer(children, many=True)
         return serializer.data
 
-class DriverPaymentSerializer(serializers.ModelSerializer):
+class DeliveryStatusSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DriverPayment
-        fields = '__all__'
-class MerchantPaymentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MerchantPayment
+        model = DeliveryStatus
         fields = '__all__'

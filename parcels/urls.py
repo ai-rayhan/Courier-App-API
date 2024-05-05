@@ -3,6 +3,7 @@ from parcels.views.parcels import ParcelDetail,ParcelList,UpdateParcelStatus,Rid
 from parcels.views.issues import IssueList,IssueDetail
 from parcels.views.parcel_details import ParcelDetailsList,ParcelDetailsDetail
 from parcels.views.return_parcels import ReturnParcelList,ReturnParcelDetail
+from parcels.views.status_tracking import StatusTrackingList,StatusTrackingDetail
 
 urlpatterns = [
     path('list-create/', ParcelList.as_view(), name='list-create'),
@@ -20,6 +21,9 @@ urlpatterns = [
 
     path('issues/', IssueList.as_view(), name='issues-list'),
     path('issues/<int:pk>/', IssueDetail.as_view(), name='issues-detail'),
+
+    path('status-tracking/', StatusTrackingList.as_view(), name='statustracking-list'),
+    path('status-tracking/<int:pk>/', StatusTrackingDetail.as_view(), name='statustracking-detail'),
 
 
 ]

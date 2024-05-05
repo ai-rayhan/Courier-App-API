@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import DeliveryTimesList,ProductTypeList,DriverPaymentList,MerchantPaymentList
-from .views import DeliveryTimesDetail,ProductTypeDetail,DriverPaymentDetail,MerchantPaymentDetail
+from admin_settings.views.delivery_times import DeliveryTimesList,DeliveryTimesDetail
+from admin_settings.views.delivery_status import DeliveryStatusList,DeliveryStatusDetail
+from admin_settings.views.product_type import ProductTypeList,ProductTypeDetail
 
 urlpatterns = [
     path('delivery-time/', DeliveryTimesList.as_view(), name='deliverytime-list'),
@@ -8,10 +9,9 @@ urlpatterns = [
 
     path('product-type/', ProductTypeList.as_view(), name='product-type-list'),
     path('product-type/<int:pk>/', ProductTypeDetail.as_view(), name='product-type-detail'),
-    
-    path('driver-payment/', DriverPaymentList.as_view(), name='driver-payment-list'),
-    path('driver-payment/<int:pk>/', DriverPaymentDetail.as_view(), name='driver-payment-detail'),
 
-    path('merchant-payment/', MerchantPaymentList.as_view(), name='merchant-payment-list'),
-    path('merchant-payment/<int:pk>/', MerchantPaymentDetail.as_view(), name='merchant-payment-detail'),
+    path('delivery-status/', DeliveryStatusList.as_view(), name='deliverystatus-list'),
+    path('delivery-status/<int:pk>/', DeliveryStatusDetail.as_view(), name='deliverystatus-detail'),
+    
+
 ]

@@ -9,7 +9,7 @@ urlpatterns = [
     path('api/parcels/', include('parcels.urls')),
     path('api/rider/', include('riders.urls')),
     path('api/receiver/', include('receiver.urls')),
-    path('api/deliverystatus/', include('delivery_status.urls')),
+    # path('api/deliverystatus/', include('delivery_status.urls')),
     path('api/branch/', include('branches.urls')),
     path('api/settings/', include('admin_settings.urls')),
     path('api/accounts/', include('accounts.urls')),

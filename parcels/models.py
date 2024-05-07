@@ -53,7 +53,7 @@ class Parcel(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        db_table = 'parcel'
+        db_table = 'parcels'
 
     def __str__(self):
         return self.voucher_id

@@ -140,15 +140,15 @@ class VerifyOTP(APIView):
 class RoleList(generics.ListCreateAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer    
-    permission_classes = [IsAuthenticated,IsSuperUser]
-    permission_codename = 'change_role'
+    permission_classes = [IsAuthenticated,HasSpecificPermission]
+    permission_codenames = ['view_role', 'change_role']
 
     
 class RoleDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    permission_classes = [IsAuthenticated,IsSuperUser]
-    permission_codename = 'change_role'
+    permission_classes = [IsAuthenticated,HasSpecificPermission]
+    permission_codename = ['change_role']
 
 
 

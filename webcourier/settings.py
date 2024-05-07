@@ -30,7 +30,9 @@ SECRET_KEY = 'django-insecure-&t-xpd9pppzy+k18yww=(+uag2&$mhix5m5h0j5=w%6%lth(9b
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# DEBUG = False
 
+# ALLOWED_HOSTS = ['courier.2ndhandmarketbd','courier.2ndhandmarketbd.com']
 
 # Application definition
 
@@ -98,21 +100,21 @@ WSGI_APPLICATION = 'webcourier.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+     'default': {
+     'ENGINE': 'django.db.backends.mysql',
+     'NAME': 'courier_management',
+     'USER': 'root',
+     'PASSWORD': '',
+     'HOST': 'localhost',
+     'PORT': '',
+     'OPTIONS': {
+        'sql_mode': 'traditional',
     }
-    #  'default': {
-    #  'ENGINE': 'django.db.backends.mysql',
-    #  'NAME': 'courier_management',
-    #  'USER': 'root',
-    #  'PASSWORD': '',
-    #  'HOST': 'localhost',
-    #  'PORT': '',
-    #  'OPTIONS': {
-    #     'sql_mode': 'traditional',
-    # }
-    # }
+    }
     
 
 }
@@ -153,7 +155,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = 'G:/djangoproject/baseproject/courier_api_38/webcourier/staticfiles/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

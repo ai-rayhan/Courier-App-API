@@ -23,6 +23,22 @@ from rest_framework import permissions
 #         return request.user.has_specific_perm(permission_codename)
 
 
+class HasSpecificPermission(permissions.BasePermission):
+    """
+    Custom permission to check if the user has a specific permission.
+    """
+
+    def has_permission(self, request, view):
+        # Check if the user has the required permission based on the HTTP method
+        permission_codenames = getattr(view, 'permission_codenames', {})
+        if request.method == 'GET' and 'view_role' in permission_codenames:
+            return True
+        elif request.method == 'POST' and 'add_role' in permission_codenames:
+            return request.user.has_specific_perm('add_role')
+        elif request.method in ['PUT', 'PATCH']:
+            return request.user.has_specific_perm('change_role')
+        return False
+
 
 class IsSiteAdmin(permissions.BasePermission):
     """
@@ -64,24 +80,24 @@ class IsSuperUserORAdmin(permissions.BasePermission):
 
 
 
-class HasSpecificPermission(permissions.BasePermission):
-    """
-    Custom permission to check if the user has a specific permission based on their role.
-    """
+# class HasSpecificPermission(permissions.BasePermission):
+#     """
+#     Custom permission to check if the user has a specific permission based on their role.
+#     """
 
-    def __init__(self, permission_codename):
-        self.permission_codename = permission_codename
+#     def __init__(self, permission_codename):
+#         self.permission_codename = permission_codename
 
-    def has_permission(self, request, view):
-        # Check if the user has the specified permission codename
-        if not self.permission_codename:
-            return False  # No permission codename provided, deny access
+#     def has_permission(self, request, view):
+#         # Check if the user has the specified permission codename
+#         if not self.permission_codename:
+#             return False  # No permission codename provided, deny access
         
-        # Check if the user has the permission based on their role
-        if request.user.has_perm(self.permission_codename):
-            return True
-        else:
-            return False
+#         # Check if the user has the permission based on their role
+#         if request.user.has_perm(self.permission_codename):
+#             return True
+#         else:
+#             return False
 
 # class BranchList(generics.ListCreateAPIView):
 #     queryset = Branch.objects.all()

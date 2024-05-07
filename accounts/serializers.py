@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MoneyReceipt,Ledger,DriverPayment,MerchantPayment
+from .models import MoneyReceipt,Ledger,RiderPayment,MerchantPayment
 
 class LedgerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,7 +12,7 @@ class MoneyReceiptSerializer(serializers.ModelSerializer):
 
 class DriverPaymentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DriverPayment
+        model = RiderPayment
         fields = '__all__'
 class MerchantPaymentSerializer(serializers.ModelSerializer):
     class Meta:

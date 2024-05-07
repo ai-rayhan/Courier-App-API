@@ -3,12 +3,13 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import Permission
 from django.db.models import Q
 from django.core.validators import EmailValidator,RegexValidator
-
+from admin_settings.views.delivery_status import DeliveryStatus
 
 class Role(models.Model):
     name = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     permissions = models.ManyToManyField(Permission, blank=True)
+    delivery_status = models.ManyToManyField(DeliveryStatus, blank=True)
 
     def __str__(self):
         return self.name

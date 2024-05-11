@@ -48,6 +48,15 @@ def signin(request):
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
                 'email': user.email,
+                'name': user.username,
+                'phone': user.phone_number,
+                'role': user.role.name if user.role else None,  # Include user's role name if exists
+                'full_name': user.full_name,
+                'address': user.address,
+                'photo_url': user.photo.url if user.photo else None,  # Include photo URL if exists
+                'is_phone_verified': user.is_phone_verified,
+                'is_active': user.is_active,
+                # Include any other fields you want to send
              
             }
         })
@@ -100,7 +109,7 @@ class SendOTP(APIView):
         otp = random.randint(100000, 999999)
         otp_str = str(otp)
 
-        response = OTPSender.send_otp(phone_number, otp_str)
+        response = OTPSender.send_otp(phone_number, otp_str+" Don't share it another")
         print(response.text)
         if response.status_code == 200:
             json_response = response.json()
@@ -117,7 +126,7 @@ class SendOTP(APIView):
             return Response({"error": "Failed to send OTP"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
-class VerifyOTP(APIView):
+class VerifyOTPAndChangePassword(APIView):
     def post(self, request):
         phone_number = request.data.get('phone_number')
         otp_provided = request.data.get('otp')
@@ -133,6 +142,23 @@ class VerifyOTP(APIView):
             user.save()
             otp_record.delete()  # Clear OTP after use
             return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+        return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
+class VerifyOTP(APIView):
+    def post(self, request):
+        phone_number = request.data.get('phone_number')
+        otp_provided = request.data.get('otp')
+
+        user = User.objects.filter(phone_number=phone_number).first()
+        if not user:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        otp_record = OTP.objects.filter(user=user).order_by('-timestamp').first()
+        if otp_record and otp_record.is_valid() and otp_record.otp == otp_provided:
+            user.is_phone_verified=True
+            user.save()
+            otp_record.delete()  # Clear OTP after use
+            return Response({"message": "Phone Verification successfully"}, status=status.HTTP_200_OK)
         return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
 

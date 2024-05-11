@@ -12,8 +12,8 @@ def create_merchant(request):
     if request.method == 'POST':
         if Merchant.objects.filter(user=request.user).exists():
              return custom_response(error= 'A merchant already exists for this user', status=status.HTTP_400_BAD_REQUEST,success=False)
-        if str(request.data.get('user')) != str(request.user.id):
-            return custom_response(error="You are not authorized to perform this action.", status=status.HTTP_403_FORBIDDEN, success=False)
+        # if str(request.data.get('user')) != str(request.user.id):
+        #     return custom_response(error="You are not authorized to perform this action.", status=status.HTTP_403_FORBIDDEN, success=False)
         
         serializer = MerchantSerializer(data=request.data)
         if serializer.is_valid():

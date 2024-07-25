@@ -11,6 +11,8 @@ class ParcelList(generics.ListCreateAPIView):
     queryset = Parcel.objects.all()
     serializer_class = ParcelSerializer
     permission_classes = [IsAuthenticated]
+    def perform_create(self, serializer):
+        serializer.save()
 class ParcelDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Parcel.objects.all()
     serializer_class = ParcelSerializer

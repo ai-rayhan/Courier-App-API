@@ -10,7 +10,9 @@ class BranchList(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method  in ['POST']:
             permission_codename = 'add_branch' 
-            return [IsAuthenticated(), IsSuperUserORAdmin(),HasSpecificPermission(permission_codename)]  
+            return [IsAuthenticated(), IsSuperUserORAdmin(),
+                    # HasSpecificPermission(permission_codename)
+                    ]  
         return super().get_permissions()  
     
 class BranchDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -19,7 +21,9 @@ class BranchDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_permissions(self):
         if self.request.method  in ['PUT','DELETE']:
             permission_codename = 'change_branch' 
-            return [IsAuthenticated(), IsSuperUserORAdmin(),HasSpecificPermission(permission_codename)]  
+            return [IsAuthenticated(), IsSuperUserORAdmin(),
+                    # HasSpecificPermission(permission_codename)
+                    ]  
         return super().get_permissions()  
 
 class DeliveryZoneList(generics.ListCreateAPIView):
@@ -28,7 +32,9 @@ class DeliveryZoneList(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method  in ['POST']:
             permission_codename = 'add_deliveryzone' 
-            return [IsAuthenticated(), IsSuperUserORAdmin(),HasSpecificPermission(permission_codename)]  
+            return [IsAuthenticated(), IsSuperUserORAdmin(),
+                    # HasSpecificPermission(permission_codename)
+                    ]  
         return super().get_permissions()  
 
     
@@ -47,7 +53,9 @@ class PickupZoneList(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method  in ['POST']:
             permission_codename = 'add_pickupzone' 
-            return [IsAuthenticated(), IsSuperUserORAdmin(),HasSpecificPermission(permission_codename)]  
+            return [IsAuthenticated(), IsSuperUserORAdmin(),
+                    # HasSpecificPermission(permission_codename)
+                    ]  
         return super().get_permissions()  
     
 class PickupZoneDetail(generics.RetrieveUpdateDestroyAPIView):

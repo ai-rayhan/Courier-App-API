@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status,generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from merchants.models import Merchant,Shops
@@ -20,6 +20,20 @@ def create_merchant(request):
             serializer.save(user=request.user)
             return custom_response(data=serializer.data, status=status.HTTP_201_CREATED)
         return custom_response(error=serializer.errors, status=status.HTTP_400_BAD_REQUEST, success=False)
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def get_merchant(request):
+    if request.method == 'GET':
+        try:
+            merchant = Merchant.objects.get(user=request.user)
+            serializer = MerchantSerializer(merchant)
+            return custom_response(serializer.data, status=status.HTTP_200_OK)
+        except Merchant.DoesNotExist:
+            return custom_response(data={'error': 'Merchant does not exist for this user'}, status=status.HTTP_404_NOT_FOUND)
+
+
+        # Your existing create_merchant logic here
+
     
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
@@ -39,36 +53,31 @@ def update_merchant(request, pk):
 
 #########################################################
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def add_shop(request):
-    if request.method == 'POST':
-        # Check if the user ID in the request data matches the authenticated user's ID
-        if str(request.data.get('user')) != str(request.user.id):
-            return custom_response(error="You are not authorized to perform this action.", status=status.HTTP_403_FORBIDDEN, success=False)
+class ShopList(generics.ListCreateAPIView):
+    queryset = Shops.objects.all()
+    serializer_class = ShopSerializer
+    permission_classes = [IsAuthenticated]
+    def get_permissions(self):
+        if self.request.method  in ['POST']:
+            return [IsAuthenticated()]  
+        return super().get_permissions() 
+    
+class UpdateShop(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Shops.objects.all()
+    serializer_class =ShopSerializer
+    permission_classes = [IsAuthenticated]
+
+    
+
+class ShopByMerchant(generics.ListCreateAPIView):
+    serializer_class = ShopSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+
+        queryset = Shops.objects.filter(user_id=user_id)
         
-        serializer = ShopSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return custom_response(data=serializer.data, status=status.HTTP_201_CREATED)
-        return custom_response(error=serializer.errors, status=status.HTTP_400_BAD_REQUEST, success=False)
-    
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated,IsActiveMerchantPermission])
-def update_shop(request, pk):
-    try:
-        shop = Shops.objects.get(pk=pk)
-    except Shops.DoesNotExist:
-        return custom_response(data="Not found.",status=status.HTTP_404_NOT_FOUND)
+        return queryset
 
-    # Check if the user ID in the request data matches the authenticated user's ID
-    if str(request.data.get('user')) != str(request.user.id):
-        return custom_response(error="You are not authorized to perform this action.", status=status.HTTP_403_FORBIDDEN, success=False)
 
-    if request.method == 'PUT':
-        serializer = ShopSerializer(shop, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return custom_response(data=serializer.data)
-        return custom_response(error=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    

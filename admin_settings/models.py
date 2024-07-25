@@ -3,12 +3,20 @@ from webcourier.utility.small_image_validator import validate_image
 
 class DeliveryTimes(models.Model):
     id = models.BigAutoField(primary_key=True)
+    delivery_type=models.CharField(max_length=255,blank=True)
     time_slot = models.CharField(max_length=255)
+    estimated_days = models.CharField(max_length=255,blank=True)
+
+    basic_charge=models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
+    per_kg_weight = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
+    per_inch_height = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
+    per_inch_width = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
+    cash_collection_charge_percent = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
-        db_table = 'delivery_times'
+        db_table = 'delivery_type_info'
 
 
 #Reference: https://chat.openai.com/share/3e1d43fe-5337-4f44-bedf-8c3422f2b7cb

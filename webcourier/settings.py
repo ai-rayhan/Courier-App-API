@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-&t-xpd9pppzy+k18yww=(+uag2&$mhix5m5h0j5=w%6%lth(9b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['http://10.0.2.2:8080','10.0.2.2','127.0.0.1']
 # DEBUG = False
 
 # ALLOWED_HOSTS = ['courier.2ndhandmarketbd','courier.2ndhandmarketbd.com']
@@ -100,21 +100,21 @@ WSGI_APPLICATION = 'webcourier.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+     'default': {
+     'ENGINE': 'django.db.backends.mysql',
+     'NAME': 'ecourier360',
+     'USER': 'root',
+     'PASSWORD': '',
+     'HOST': 'localhost',
+     'PORT': '',
+     'OPTIONS': {
+        'sql_mode': 'traditional',
     }
-    #  'default': {
-    #  'ENGINE': 'django.db.backends.mysql',
-    #  'NAME': 'courier_management',
-    #  'USER': 'root',
-    #  'PASSWORD': '',
-    #  'HOST': 'localhost',
-    #  'PORT': '',
-    #  'OPTIONS': {
-    #     'sql_mode': 'traditional',
-    # }
-    # }
+    }
     
 
 }

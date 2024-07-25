@@ -55,13 +55,13 @@ class PackageListByVoucherId(generics.ListCreateAPIView):
         
 #         return queryset
 
-# class PackageList(generics.ListCreateAPIView):
-#     serializer_class = PackageSerializer
-#     permission_classes = [IsAuthenticated]
+class ParcelList(generics.ListCreateAPIView):
+    serializer_class = ParcelSerializer
+    permission_classes = [IsAuthenticated]
 
-#     def get_queryset(self):
-#         merchant_id = self.request.user.id
+    def get_queryset(self):
+        merchant_id = self.request.user.id
 
-#         queryset = Packages.objects.filter(merchant_id=merchant_id)
+        queryset = Parcel.objects.filter(merchant_id=merchant_id)
         
-#         return queryset
+        return queryset

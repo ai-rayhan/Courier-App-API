@@ -12,11 +12,11 @@ class ProductTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductType
         fields = ['id', 'title', 'parent', 'children', 'created_at', 'updated_at']
-
+        
     def get_children(self, obj):
-        children = ProductType.objects.filter(parent=obj)
-        serializer = ProductTypeSerializer(children, many=True)
-        return serializer.data
+        children_queryset = obj.children.all()
+        children_serializer = self.__class__(children_queryset, many=True)
+        return children_serializer.data
 
 class DeliveryStatusSerializer(serializers.ModelSerializer):
     class Meta:

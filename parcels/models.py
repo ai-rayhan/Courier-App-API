@@ -45,12 +45,12 @@ class Parcel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        today_date = datetime.today().strftime('%Y%m%d')
-        today_parcels_count = Parcel.objects.filter(voucher_id__startswith=f'NE-{today_date}').count()
-        unique_id = today_parcels_count + 1
-        self.voucher_id = f'NE-{today_date}{unique_id}'
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs,):
+    #     today_date = datetime.today().strftime('%Y%m%d')
+    #     today_parcels_count = Parcel.objects.filter(voucher_id__startswith=f'NE-{today_date}').count()
+    #     unique_id = today_parcels_count + 1
+    #     self.voucher_id = f'NE-{today_date}{unique_id}'
+    #     super().save(*args, **kwargs)
 
     class Meta:
         db_table = 'parcels'

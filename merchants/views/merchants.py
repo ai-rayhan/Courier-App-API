@@ -50,7 +50,11 @@ def update_merchant(request, pk):
             return custom_response(data=serializer.data)
         return custom_response(error=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+class MerchantList(generics.ListCreateAPIView):
+    queryset = Merchant.objects.all()
+    serializer_class = MerchantSerializer
+    permission_classes = [IsAuthenticated]
+    
 #########################################################
 
 class ShopList(generics.ListCreateAPIView):

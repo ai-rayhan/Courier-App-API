@@ -4,7 +4,6 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -17,55 +16,65 @@ import random
 from webcourier.utility.otp_sender import OTPSender
 from rest_framework import generics
 from webcourier.permissions import HasSpecificPermission,IsSiteAdmin,IsSuperUser
+from merchants.models import Merchant
+from riders.models import Rider
+from receiver.models import Receiver
 
 ############################# Authentication Section ######################
+class SignUp(APIView):
+  def post(self, request):
+      serializer = UserSerializer(data=request.data)
+      if serializer.is_valid():
+          password = serializer.validated_data['password']
+          hashed_password = make_password(password) 
+          serializer.validated_data['password'] = hashed_password 
+          
+          serializer.save()
+          return Response(serializer.data, status=status.HTTP_201_CREATED)
+      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
-def signup(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        password = serializer.validated_data['password']
-        hashed_password = make_password(password) 
-        serializer.validated_data['password'] = hashed_password 
-        
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-@api_view(['POST'])
-def signin(request):
-    email = request.data.get('email')
-    password = request.data.get('password')
-       
-    user = authenticate(email=email, password=password)
-    if user:
-        refresh = RefreshToken.for_user(user)
-        return Response({
-            'status': True,
-            'message': 'Success',
-            'data': {
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-                'email': user.email,
-                'name': user.username,
-                'phone': user.phone_number,
-                'role': user.role.name if user.role else None,  # Include user's role name if exists
-                'full_name': user.full_name,
-                'address': user.address,
-                'photo_url': user.photo.url if user.photo else None,  # Include photo URL if exists
-                'is_phone_verified': user.is_phone_verified,
-                'is_active': user.is_active,
-                # Include any other fields you want to send
-             
-            }
-        })
-    else:
-        return Response({
-            'status': False,
-            'message': 'Invalid credentials'
-        }, status=status.HTTP_401_UNAUTHORIZED)
-
+class SignIn(APIView):
+    def post(self, request):
+     email = request.data.get('email')
+     password = request.data.get('password')
+     
+     user = authenticate(username=email, password=password)
+     
+     if user is not None:
+         if user.is_active:
+             refresh = RefreshToken.for_user(user)
+             return Response({
+                 'status': True,
+                 'message': 'Success',
+                 'data': {
+                     'refresh': str(refresh),
+                     'access': str(refresh.access_token),
+                     'email': user.email,
+                     'name': user.username,
+                     'phone': user.phone_number,
+                     'role': user.role.id if user.role else None,
+                     'merchant_id': Merchant.objects.filter(user_id=user.id).first().id if Merchant.objects.filter(user_id=user.id).exists() else None,
+                     'rider_id': Rider.objects.filter(user_id=user.id).first().id if Rider.objects.filter(user_id=user.id).exists() else None,
+                     'receiver_id': Receiver.objects.filter(user_id=user.id).first().id if Receiver.objects.filter(user_id=user.id).exists() else None,
+                     'full_name': user.full_name,
+                     'address': user.address,
+                     'photo_url': user.photo.url if user.photo else None,
+                     'is_phone_verified': user.is_phone_verified,
+                     'is_active': user.is_active,
+                 }
+             })
+         else:
+             return Response({
+                 'status': False,
+                 'message': 'Account is inactive'
+             }, status=status.HTTP_403_FORBIDDEN)
+     else:
+         return Response({
+             'status': False,
+             'message': 'Invalid credentials'
+         }, status=status.HTTP_401_UNAUTHORIZED)
+    
 
 ############################# Profile Section ######################
 
@@ -161,6 +170,22 @@ class VerifyOTP(APIView):
             return Response({"message": "Phone Verification successfully"}, status=status.HTTP_200_OK)
         return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
+##################################### User permissions ###############################
+class ActivateUserAndUpdateRole(APIView):
+    def post(self, request):
+        is_active = request.data.get('is_active')
+        role = request.data.get('role')
+        user_id = request.data.get('id')
+
+        user = User.objects.filter(id=user_id).first()
+        if not user:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        else:
+            user.is_active=is_active
+            user.role=Role.objects.filter(id=role).first()
+            user.save()
+            return Response({"message": "User activated Sucessfully"}, status=status.HTTP_200_OK)
 
 ####################################### Role Section  #################################
 class RoleList(generics.ListCreateAPIView):

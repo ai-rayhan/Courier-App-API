@@ -5,7 +5,7 @@ from webcourier.permissions import IsSuperUserORAdmin
 from rest_framework.permissions import  IsAuthenticated
 
 class ProductTypeList(generics.ListCreateAPIView):
-    queryset = ProductType.objects.filter(parent=None)
+    queryset = ProductType.objects.all()
     serializer_class = ProductTypeSerializer
     permission_classes = [IsAuthenticated]
     def get_permissions(self):

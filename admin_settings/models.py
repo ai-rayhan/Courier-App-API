@@ -23,7 +23,6 @@ class DeliveryTimes(models.Model):
 class ProductType(models.Model):
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=255)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 

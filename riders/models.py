@@ -10,6 +10,7 @@ class Rider(models.Model):
     vehicle_type = models.CharField(max_length=255)
     registration_number = models.CharField(max_length=255)
     rider_commission = models.FloatField(null=True, blank=True)
+    status=models.CharField(default='0',max_length=1,db_comment='0=inactive,1=active,2=soft delete')
     created_at = models.DateTimeField(auto_now_add=True,null=True)
     updated_at = models.DateTimeField(auto_now=True,null=True)
 

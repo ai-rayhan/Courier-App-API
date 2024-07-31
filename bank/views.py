@@ -66,3 +66,49 @@ def update_bank_information(request, pk):
             serializer.save()
             return custom_response(data=serializer.data)
         return custom_response(error=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+class InformationList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user_info = Information.objects.filter(user=request.user)
+        serializer = InformationSerializer(user_info, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        data = request.data
+        serializer = InformationSerializer(data=data, many=True)
+        if serializer.is_valid():
+            for item in serializer.validated_data:
+                # item['user'] = request.user
+                item.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request):
+        data = request.data
+        updated_info = []
+        errors = []
+        
+        for item in data:
+            info_id = item.get('id')
+            try:
+                info_instance = Information.objects.get(id=info_id, user=request.user)
+            except Information.DoesNotExist:
+                errors.append(f"Information with id {info_id} not found.")
+                continue
+            
+            serializer = InformationSerializer(info_instance, data=item, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                updated_info.append(serializer.data)
+            else:
+                errors.append(serializer.errors)
+        
+        if errors:
+            return Response({"errors": errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(updated_info, status=status.HTTP_200_OK)

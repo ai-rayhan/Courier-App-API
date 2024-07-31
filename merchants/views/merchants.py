@@ -1,4 +1,6 @@
 from rest_framework import status,generics
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from merchants.models import Merchant,Shops
@@ -50,11 +52,48 @@ def update_merchant(request, pk):
             return custom_response(data=serializer.data)
         return custom_response(error=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class MerchantList(generics.ListCreateAPIView):
-    queryset = Merchant.objects.all()
-    serializer_class = MerchantSerializer
+from bank.serializers import InformationSerializer
+from bank.models import Information
+class MerchantList(APIView):
     permission_classes = [IsAuthenticated]
-    
+
+    def get(self, request):
+        # Fetch all merchants
+        merchants = Merchant.objects.all()
+
+        # Prepare a list to hold the serialized data
+        response_data = []
+
+        # Iterate through each merchant and gather related information
+        for merchant in merchants:
+            merchant_data = MerchantSerializer(merchant).data
+            
+            # Fetch related information for the merchant's user
+            information = Information.objects.filter(user=merchant.user)
+            information_data = InformationSerializer(information, many=True).data
+            
+            # Add the information data to the merchant data
+            merchant_data['bank_information'] = information_data
+            
+            # Append to the response list
+            response_data.append(merchant_data)
+        
+        return Response(response_data)
+
+class MerchantActivate(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        merchant_ids = request.data.get('merchant_ids')
+        status = request.data.get('status')
+
+        if not isinstance(merchant_ids, list) or not isinstance(status, int):
+            return Response('Invalid data', status=400)
+
+        # Update status for all merchants in the list
+        Merchant.objects.filter(id__in=merchant_ids).update(status=status)
+        
+        return Response('Updated successfully')
 #########################################################
 
 class ShopList(generics.ListCreateAPIView):

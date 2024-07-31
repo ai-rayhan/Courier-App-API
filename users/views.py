@@ -19,21 +19,52 @@ from webcourier.permissions import HasSpecificPermission,IsSiteAdmin,IsSuperUser
 from merchants.models import Merchant
 from riders.models import Rider
 from receiver.models import Receiver
-
+from merchants.serializers import MerchantSerializer
+from riders.serializers import RidersSerializer
 ############################# Authentication Section ######################
+
 class SignUp(APIView):
-  def post(self, request):
-      serializer = UserSerializer(data=request.data)
-      if serializer.is_valid():
-          password = serializer.validated_data['password']
-          hashed_password = make_password(password) 
-          serializer.validated_data['password'] = hashed_password 
-          
-          serializer.save()
-          return Response(serializer.data, status=status.HTTP_201_CREATED)
-      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+        user_serializer = UserSerializer(data=request.data)
+        if user_serializer.is_valid():
+            password = user_serializer.validated_data['password']
+            hashed_password = make_password(password)
+            user_serializer.validated_data['password'] = hashed_password
 
+            user = user_serializer.save()
+            user_type = request.data.get('user_type')
 
+            if user_type == 'merchant':
+                merchant_data = request.data.get('merchant', {})
+                merchant_data['user'] = user.id
+                merchant_serializer = MerchantSerializer(data=merchant_data)
+                if merchant_serializer.is_valid():
+                    merchant_serializer.save()
+                    return Response(user_serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    # Delete the user if merchant creation fails
+                    user.delete()
+                    return Response(merchant_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            elif user_type == 'rider':
+                rider_data = request.data.get('rider', {})
+                rider_data['user'] = user.id
+                rider_serializer = RidersSerializer(data=rider_data)
+                if rider_serializer.is_valid():
+                    rider_serializer.save()
+                    return Response(user_serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    # Delete the user if rider creation fails
+                    user.delete()
+                    return Response(rider_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            else:
+                # Handle unknown user type
+                user.delete()
+                return Response({"error": "Unknown user type"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 class SignIn(APIView):
     def post(self, request):
      email = request.data.get('email')

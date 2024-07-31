@@ -14,7 +14,7 @@ urlpatterns = [
 
     path('rider-upadate/<int:pk>/', RiderParcelUpdate.as_view(), name='parceldetails-detail'),
 
-    path('update-status/<int:pk>/', UpdateParcelStatus.as_view(), name='update-parcel'),
+    path('update-status/', UpdateParcelStatus.as_view(), name='update-parcel'),
     
     path('returnparcel/', ReturnParcelList.as_view(), name='returnparcel-list'),
     path('returnparcel/<int:pk>/', ReturnParcelDetail.as_view(), name='returnparcel-detail'),

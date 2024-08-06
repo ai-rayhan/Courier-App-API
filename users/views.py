@@ -134,7 +134,27 @@ class UserProfileUpdate(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+from django.http import JsonResponse
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+def get_permissions(request):
+    # Exclude default Django permissions
+    default_permissions = ['add', 'change', 'delete', 'view']
+    permissions = Permission.objects.exclude(
+        codename__in=[f'{perm}_{model}' for perm in default_permissions for model in Permission.objects.values_list('content_type__model', flat=True)]
+    ).select_related('content_type')
 
+    permission_data = []
+    for permission in permissions:
+        permission_data.append({
+            'id': permission.id,
+            'codename': permission.codename,
+            'content_type_app_label': permission.content_type.app_label,
+            'content_type_model': permission.content_type.model,
+        })
+
+    return JsonResponse({'permissions': permission_data})
 ################################# OTP Section ###############################################
 
 class SendOTP(APIView):
@@ -222,8 +242,18 @@ class ActivateUserAndUpdateRole(APIView):
 class RoleList(generics.ListCreateAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer    
-    permission_classes = [IsAuthenticated,HasSpecificPermission]
-    permission_codenames = ['view_role', 'change_role']
+    # permission_classes = [IsAuthenticated,HasSpecificPermission]
+    # permission_codenames = ['view_role', 'change_role']
+    def create(self, request, *args, **kwargs):
+        permissions_data = request.data.pop('permissions', []) 
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        role = serializer.save()
+
+        # Assign permissions to the role
+        role.permissions.set(permissions_data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     
 class RoleDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -231,7 +261,18 @@ class RoleDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RoleSerializer
     permission_classes = [IsAuthenticated,HasSpecificPermission]
     permission_codename = ['change_role']
+    def update(self, request, *args, **kwargs):
+        permissions_data = request.data.pop('permissions', []) 
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        role = serializer.save()
 
+        # Update permissions for the role
+        role.permissions.set(permissions_data)
+
+        return Response(serializer.data)
 
 
 

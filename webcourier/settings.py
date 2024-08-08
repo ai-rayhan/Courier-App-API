@@ -89,7 +89,8 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         # other authentication classes...
     ),
-    # other settings...
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 10, 
 }
 
 
@@ -106,7 +107,7 @@ DATABASES = {
     # }
      'default': {
      'ENGINE': 'django.db.backends.mysql',
-     'NAME': 'ecourier360',
+     'NAME': 'courier_management',
      'USER': 'root',
      'PASSWORD': '',
      'HOST': 'localhost',

@@ -3,7 +3,7 @@ from riders.models import Rider
 from users.serializers import UserSerializer
 
 class RidersSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    # user = UserSerializer()
     class Meta:
         model = Rider
         fields = '__all__'

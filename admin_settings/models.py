@@ -17,11 +17,6 @@ class DeliveryTimes(models.Model):
 
     class Meta:
         db_table = 'delivery_type_info'
-        permissions = [
-            ("add", "delivery_type_info"),
-            ("view", "delivery_type_info"),
-            ("update", "delivery_type_info"),
-        ]
 
 
 #Reference: https://chat.openai.com/share/3e1d43fe-5337-4f44-bedf-8c3422f2b7cb

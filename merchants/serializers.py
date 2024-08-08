@@ -5,7 +5,7 @@ from users.serializers import UserSerializer
 
 
 class MerchantSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    # user = UserSerializer()
     class Meta:
         model = Merchant
         fields = '__all__'

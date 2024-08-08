@@ -54,32 +54,36 @@ def update_merchant(request, pk):
 
 from bank.serializers import InformationSerializer
 from bank.models import Information
-class MerchantList(APIView):
+from users.models import User
+from users.serializers import UserSerializer
+
+class Merchants(generics.ListCreateAPIView):
+    queryset = Merchant.objects.all()
+    serializer_class = MerchantSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        # Fetch all merchants
-        merchants = Merchant.objects.all()
+class MerchantDetails(APIView):
+    permission_classes = [IsAuthenticated]
 
-        # Prepare a list to hold the serialized data
-        response_data = []
-
-        # Iterate through each merchant and gather related information
-        for merchant in merchants:
+    def get(self, request, merchant_id):
+        try:
+            merchant = Merchant.objects.get(id=merchant_id)
             merchant_data = MerchantSerializer(merchant).data
             
-            # Fetch related information for the merchant's user
+            user = merchant.user
+            user_data = UserSerializer(user).data
+
             information = Information.objects.filter(user=merchant.user)
             information_data = InformationSerializer(information, many=True).data
             
-            # Add the information data to the merchant data
+            merchant_data['userdetails'] = user_data
             merchant_data['bank_information'] = information_data
             
-            # Append to the response list
-            response_data.append(merchant_data)
+            return Response(merchant_data)
         
-        return Response(response_data)
-
+        except Merchant.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
 class MerchantActivate(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -90,9 +94,12 @@ class MerchantActivate(APIView):
         if not isinstance(merchant_ids, list) or not isinstance(status, int):
             return Response('Invalid data', status=400)
 
-        # Update status for all merchants in the list
-        Merchant.objects.filter(id__in=merchant_ids).update(status=status)
-        
+        updated_merchants= Merchant.objects.filter(id__in=merchant_ids).update(status=status)
+
+        if updated_merchants:
+            user_ids = Merchant.objects.filter(id__in=merchant_ids).values_list('user_id', flat=True)
+            User.objects.filter(id__in=user_ids).update(role=3)
+
         return Response('Updated successfully')
 #########################################################
 

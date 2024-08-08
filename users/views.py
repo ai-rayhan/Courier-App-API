@@ -81,6 +81,7 @@ class SignIn(APIView):
                  'data': {
                      'refresh': str(refresh),
                      'access': str(refresh.access_token),
+                     'id':user.id,
                      'email': user.email,
                      'name': user.username,
                      'phone': user.phone_number,
@@ -139,11 +140,7 @@ from django.http import JsonResponse
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 def get_permissions(request):
-    # Exclude default Django permissions
-    default_permissions = ['add', 'change', 'delete', 'view']
-    permissions = Permission.objects.exclude(
-        codename__in=[f'{perm}_{model}' for perm in default_permissions for model in Permission.objects.values_list('content_type__model', flat=True)]
-    ).select_related('content_type')
+    permissions = Permission.objects.all().select_related('content_type')
 
     permission_data = []
     for permission in permissions:
@@ -153,8 +150,11 @@ def get_permissions(request):
             'content_type_app_label': permission.content_type.app_label,
             'content_type_model': permission.content_type.model,
         })
+    sorted_permission_data = sorted(permission_data, key=lambda x: x['id'])
 
-    return JsonResponse({'permissions': permission_data})
+    # Remove the first 25 elements
+    filtered_permission_data = sorted_permission_data[24:]
+    return JsonResponse({'permissions': filtered_permission_data})
 ################################# OTP Section ###############################################
 
 class SendOTP(APIView):
@@ -222,11 +222,11 @@ class VerifyOTP(APIView):
         return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
 ##################################### User permissions ###############################
-class ActivateUserAndUpdateRole(APIView):
+class DeactivatedUser(APIView):
     def post(self, request):
         is_active = request.data.get('is_active')
-        role = request.data.get('role')
         user_id = request.data.get('id')
+        role = request.data.get('role')
 
         user = User.objects.filter(id=user_id).first()
         if not user:
@@ -234,9 +234,9 @@ class ActivateUserAndUpdateRole(APIView):
 
         else:
             user.is_active=is_active
-            user.role=Role.objects.filter(id=role).first()
+            user.role=role
             user.save()
-            return Response({"message": "User activated Sucessfully"}, status=status.HTTP_200_OK)
+            return Response({"message": "Request handle Sucessfully"}, status=status.HTTP_200_OK)
 
 ####################################### Role Section  #################################
 class RoleList(generics.ListCreateAPIView):

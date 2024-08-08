@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserProfileView,UserProfileUpdate,SendOTP,VerifyOTPAndChangePassword,VerifyOTP,RoleList,RoleDetail,ActivateUserAndUpdateRole,SignIn,SignUp,get_permissions
+from .views import UserProfileView,UserProfileUpdate,SendOTP,VerifyOTPAndChangePassword,VerifyOTP,RoleList,RoleDetail,DeactivatedUser,SignIn,SignUp,get_permissions
 
 urlpatterns = [
     path('signup/', SignUp.as_view(), name='signup'),
@@ -9,7 +9,7 @@ urlpatterns = [
     path('send-otp/', SendOTP.as_view(), name='send_otp'),
     path('verify-otp-password/', VerifyOTPAndChangePassword.as_view(), name='verify_otp_password'),
     path('verifyphone-otp/', VerifyOTP.as_view(), name='verify_otp'),
-    path('activate-user/', ActivateUserAndUpdateRole.as_view(), name='activate-user'),
+    path('deactivate-user/', DeactivatedUser.as_view(), name='activate-user'),
     # path('addrole/', add_role),
     # path('updaterole/<int:pk>/', update_role),
     # path('roles/', RoleListView.as_view(), name='role-list'),

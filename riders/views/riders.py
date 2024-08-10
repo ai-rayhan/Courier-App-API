@@ -4,8 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status,generics
-from bank.serializers import InformationSerializer
-from bank.models import Information
+from bank.serializers import BankInformationSerializer
+from bank.models import BankInformation
 from users.serializers import UserSerializer
 from users.models import User
 
@@ -25,8 +25,8 @@ class RiderDetails(APIView):
             user = rider.user
             user_data = UserSerializer(user).data
 
-            information = Information.objects.filter(user=rider.user)
-            information_data = InformationSerializer(information, many=True).data
+            information = BankInformation.objects.filter(user=rider.user)
+            information_data = BankInformationSerializer(information, many=True).data
             
             rider_data['userdetails'] = user_data
             rider_data['bank_information'] = information_data

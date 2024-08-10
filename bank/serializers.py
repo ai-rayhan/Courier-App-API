@@ -1,13 +1,13 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Method,Information
+from .models import PaymentMethod,BankInformation
 
-class MathodSerializer(serializers.ModelSerializer):
+class PaymentMathodSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Method
+        model = PaymentMethod
         fields = '__all__'
 
-class InformationSerializer(serializers.ModelSerializer):
+class BankInformationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Information
+        model = BankInformation
         fields = '__all__'

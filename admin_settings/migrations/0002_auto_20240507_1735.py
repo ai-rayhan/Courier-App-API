@@ -7,17 +7,17 @@ def create_initial_delivery_status(apps, schema_editor):
     DeliveryStatus = apps.get_model('admin_settings', 'DeliveryStatus')
     DeliveryStatus.objects.bulk_create([
         DeliveryStatus(status='Pending',activity='Waitng for Admin accept',image='media/delivery_status/pending.png'),
-        DeliveryStatus(status='Accepted',activity='Admin accepted parcel',image='media/delivery_status/pending.png'),
-        DeliveryStatus(status='Assigned',activity='Assigned rider for pickup parcel',image='media/delivery_status/pending.png'),
-        DeliveryStatus(status='Picked Up',activity='Picked up parcel',image='media/delivery_status/pending.png'),
-        DeliveryStatus(status='On The Way',activity='Delivery Rider Carying parcel to deliver to Deliver area',image='media/delivery_status/pending.png'),
-        DeliveryStatus(status='Hold by Customer',activity='Parcel Holded by customer',image='media/delivery_status/pending.png'),
-        DeliveryStatus(status='Partial',activity='Parcel partial delivered',image='media/delivery_status/pending.png'),
-        DeliveryStatus(status='Deliverd',activity='Parcel delivered',image='media/delivery_status/pending.png'),
-        DeliveryStatus(status='Return',activity='Returning parcel',image='media/delivery_status/pending.png'),
-        DeliveryStatus(status='Returned',activity='Returned parcel',image='media/delivery_status/pending.png'),
-        DeliveryStatus(status='Cancel',activity='Parcel Canceled',image='media/delivery_status/pending.png'),
-        DeliveryStatus(status='Payment Settled',activity='Payment Settled',image='media/delivery_status/pending.png'),
+        DeliveryStatus(status='Accepted',activity='Admin accepted parcel',image='media/delivery_status/accepted.png'),
+        DeliveryStatus(status='Assigned',activity='Assigned rider for pickup parcel',image='media/delivery_status/assigned.png'),
+        DeliveryStatus(status='Picked Up',activity='Picked up parcel',image='media/delivery_status/pickedup.png'),
+        DeliveryStatus(status='On The Way',activity='Delivery Rider Carying parcel to deliver to Deliver area',image='media/delivery_status/ontheway.png'),
+        DeliveryStatus(status='Hold by Customer',activity='Parcel Holded by customer',image='media/delivery_status/hold.png'),
+        DeliveryStatus(status='Partial',activity='Parcel partial delivered',image='media/delivery_status/partial.png'),
+        DeliveryStatus(status='Deliverd',activity='Parcel delivered',image='media/delivery_status/deliverd.png'),
+        DeliveryStatus(status='Return',activity='Returning parcel',image='media/delivery_status/return.png'),
+        DeliveryStatus(status='Returned',activity='Returned parcel',image='media/delivery_status/returned.png'),
+        DeliveryStatus(status='Cancel',activity='Parcel Canceled',image='media/delivery_status/cancel.png'),
+        DeliveryStatus(status='Payment Settled',activity='Payment Settled',image='media/delivery_status/payment.png'),
     ])
 
 # def create_initial_delivery_times(apps, schema_editor):

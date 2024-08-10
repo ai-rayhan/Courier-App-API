@@ -13,7 +13,7 @@ class ParcelList(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     def perform_create(self, serializer):
         serializer.save()
-class ParcelDetail(generics.RetrieveUpdateDestroyAPIView):
+class ParcelUpdate(generics.RetrieveUpdateDestroyAPIView):
     queryset = Parcel.objects.all()
     serializer_class = ParcelSerializer
     permission_classes = [IsAuthenticated,CanUpdateParcelPermission]
@@ -24,41 +24,41 @@ class RiderParcelUpdate(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
 
 ####### Custom view #######
-from rest_framework import status
-from rest_framework.response import Response
+# from rest_framework import status
+# from rest_framework.response import Response
 
-class UpdateParcelStatus(mixins.UpdateModelMixin, generics.GenericAPIView):
-    queryset = Parcel.objects.all()
-    serializer_class = ParcelSerializer
-    permission_classes = [IsAuthenticated]
+# class UpdateParcelStatus(mixins.UpdateModelMixin, generics.GenericAPIView):
+#     queryset = Parcel.objects.all()
+#     serializer_class = ParcelSerializer
+#     permission_classes = [IsAuthenticated]
 
-    def put(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
+#     def put(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         serializer = self.get_serializer(instance, data=request.data, partial=True)
+#         serializer.is_valid(raise_exception=True)
        
         
-        # Attempt to update the Parcel status
-        try:
-            serializer.save(delivery_status_id=request.data.get('delivery_status_id'))
-        except:
-            return Response({"error": "Failed to update Parcel status"}, status=status.HTTP_400_BAD_REQUEST)
+#         # Attempt to update the Parcel status
+#         try:
+#             serializer.save(delivery_status_id=request.data.get('delivery_status_id'))
+#         except:
+#             return Response({"error": "Failed to update Parcel status"}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Check if the Parcel status was successfully updated
-        if instance.delivery_status_id == int(request.data.get('delivery_status_id')):
-            # Status updated successfully, create StatusTracking object
-            StatusTracking.objects.create(
-                parcel_id=instance.id,
-                status_id=instance.delivery_status.id,
-                created_by=request.user.username+"("+request.user.role.name+")" # Assuming you're using authentication
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response({"error": "Failed to update Parcel status"}, status=status.HTTP_400_BAD_REQUEST)
+#         # Check if the Parcel status was successfully updated
+#         if instance.delivery_status_id == int(request.data.get('delivery_status_id')):
+#             # Status updated successfully, create StatusTracking object
+#             StatusTracking.objects.create(
+#                 parcel_id=instance.id,
+#                 status_id=instance.delivery_status.id,
+#                 created_by=request.user.username+"("+request.user.role.name+")" # Assuming you're using authentication
+#             )
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         else:
+#             return Response({"error": "Failed to update Parcel status"}, status=status.HTTP_400_BAD_REQUEST)
 
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from admin_settings.models import DeliveryStatus
+# from rest_framework.response import Response
+# from rest_framework.views import APIView
+# from admin_settings.models import DeliveryStatus
 # class UpdateParcelStatus(APIView):
 #     permission_classes = [IsAuthenticated]
 
@@ -88,11 +88,29 @@ from admin_settings.models import DeliveryStatus
 #             )
 
 #         return Response('Updated successfully')
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from parcels.serializers import ViewParcelSerializer
+
+class ParcelDetailView(APIView):
+    def get(self, request, id):
+        try:
+            parcel = Parcel.objects.select_related(
+                'merchant', 'receiver', 'pickup_driver', 
+                'driver', 'return_driver', 'delivery_status',
+                'pickup_zone', 'delivery_zone'
+            ).get(id=id)
+            
+            serializer = ViewParcelSerializer(parcel)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Parcel.DoesNotExist:
+            return Response({"error": "Parcel not found."}, status=status.HTTP_404_NOT_FOUND)
+
 from admin_settings.models import DeliveryStatus
 from riders.models import Rider
+
 class UpdateParcelStatus(APIView):
     permission_classes = [IsAuthenticated]
 

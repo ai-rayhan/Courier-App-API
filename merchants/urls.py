@@ -1,10 +1,10 @@
 from django.urls import path
-from merchants.views.merchants import create_merchant, update_merchant,ShopList,ShopByMerchant,UpdateShop,MerchantActivate,Merchants,MerchantDetails
+from merchants.views.merchants import ShopList,ShopByMerchant,UpdateShop,MerchantActivate,Merchants,MerchantDetails
 from merchants.views.merchant_package import PackageListByStatus,PackageListByVoucherId,ParcelList
-
+# create_merchant, update_merchant,
 urlpatterns = [
-    path('create/', create_merchant, name='create_merchant'),
-    path('update/<int:pk>/', update_merchant, name='update_merchant'),
+    # path('create/', create_merchant, name='create_merchant'),
+    # path('update/<int:pk>/', update_merchant, name='update_merchant'),
 
     path('allmerchants/', Merchants.as_view(), name='merchant-list'),
     path('merchant/<int:merchant_id>/', MerchantDetails.as_view(), name='merchant-details'),

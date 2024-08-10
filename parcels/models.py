@@ -59,7 +59,7 @@ class Parcel(models.Model):
         return self.voucher_id
 
 
-class ParcelDetails(models.Model):
+class ParcelItem(models.Model):
     id = models.BigAutoField(primary_key=True)
     parcel = models.ForeignKey(Parcel, on_delete=models.CASCADE)
     date = models.DateField()
@@ -85,11 +85,8 @@ class ParcelDetails(models.Model):
 class StatusTracking(models.Model):
     id = models.BigAutoField(primary_key=True)
     parcel = models.ForeignKey("parcels.Parcel", on_delete=models.CASCADE)
-    # date = models.DateField()
     status = models.ForeignKey(DeliveryStatus, on_delete=models.CASCADE)
-    # status_mode = models.CharField(max_length=255)
     note = models.CharField(max_length=255, null=True, blank=True)
-    # driver_id = models.IntegerField(null=True, blank=True)
     created_by = models.CharField(max_length=55)
     created_at = models.DateTimeField(auto_now_add=True,null=True)
     updated_at = models.DateTimeField(auto_now=True,null=True)

@@ -1,21 +1,21 @@
-from parcels.models import ParcelDetails
-from parcels.serializers import ParcelDetailsSerializer
+from parcels.models import ParcelItem
+from parcels.serializers import ParcelItemSerializer
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
 
-class ParcelDetailsList(generics.ListCreateAPIView):
-    serializer_class = ParcelDetailsSerializer
+class ParcelItemList(generics.ListCreateAPIView):
+    serializer_class = ParcelItemSerializer
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
         parcel_id = self.request.query_params.get('parcel')
         if parcel_id is not None:
-            queryset = ParcelDetails.objects.filter(parcel_id=parcel_id)
+            queryset = ParcelItem.objects.filter(parcel_id=parcel_id)
         else:
-            queryset = ParcelDetails.objects.none()
+            queryset = ParcelItem.objects.none()
         return queryset
     
-class ParcelDetailsDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ParcelDetails.objects.all()
-    serializer_class = ParcelDetailsSerializer
+class ParcelItemUpdate(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ParcelItem.objects.all()
+    serializer_class = ParcelItemSerializer
     permission_classes = [IsAuthenticated]

@@ -1,11 +1,8 @@
 # serializers.py
 from rest_framework import serializers
 from .models import Merchant,Shops
-from users.serializers import UserSerializer
-
 
 class MerchantSerializer(serializers.ModelSerializer):
-    # user = UserSerializer()
     class Meta:
         model = Merchant
         fields = '__all__'

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Parcel,Issue,ParcelDetails,ReturnParcel,StatusTracking
+from .models import Parcel,Issue,ParcelItem,ReturnParcel,StatusTracking
 from datetime import datetime
 
 class ParcelSerializer(serializers.ModelSerializer):
@@ -24,12 +24,33 @@ class RiderParcelSerializer(serializers.ModelSerializer):
         model = Parcel
         fields = ['pickup_driver','driver','return_driver','payment_status','driver_payment_status','cash_collection','partial_cash_collection','return_date','issue_note','payment_date','note']
 
-class ParcelDetailsSerializer(serializers.ModelSerializer):
+from merchants.serializers import MerchantSerializer
+from receiver.serializers import ReciverSerializer
+from riders.serializers import RidersSerializer
+from admin_settings.serializers import DeliveryStatusSerializer
+from branches.serializers import DeliveryZoneSerializer,PickupZoneSerializer
+
+class ViewParcelSerializer(serializers.ModelSerializer):
+    merchant = MerchantSerializer()
+    receiver = ReciverSerializer()
+    pickup_driver = RidersSerializer()
+    driver = RidersSerializer()
+    return_driver = RidersSerializer()
+    delivery_status = DeliveryStatusSerializer()
+    pickup_zone = PickupZoneSerializer()
+    delivery_zone = DeliveryZoneSerializer()
+
     class Meta:
-        model = ParcelDetails
+        model = Parcel
+        fields = '__all__'
+
+class ParcelItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ParcelItem
         fields = '__all__'
 
 class StatusTrackingSerializer(serializers.ModelSerializer):
+    status = DeliveryStatusSerializer()
     class Meta:
         model = StatusTracking
         fields = '__all__'

@@ -5,8 +5,10 @@ from rest_framework.permissions import IsAuthenticated
 from parcels.permissions import CanUpdateParcelPermission
 from rest_framework import mixins
 from rest_framework import generics
-
+from rest_framework.views import APIView
 from parcels.models import StatusTracking
+from django.db import models
+
 class ParcelList(generics.ListCreateAPIView):
     queryset = Parcel.objects.all()
     serializer_class = ParcelSerializer
@@ -22,6 +24,37 @@ class RiderParcelUpdate(generics.UpdateAPIView):
     queryset = Parcel.objects.all()
     serializer_class = RiderParcelSerializer
     permission_classes = [IsAuthenticated]
+from merchants.models import Merchant
+class GetParcels(APIView):
+    serializer_class = ParcelSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = self.request.user
+        delivery_status_id = self.request.query_params.get('delivery_status')
+        # rider_id = self.request.query_params.get('rider')
+
+        # Fetch the merchant associated with the current user
+        merchant = Merchant.objects.filter(user=user).first()
+        merchant_id = merchant.id if merchant else None
+        rider = Rider.objects.filter(user=user).first()
+        rider_id = rider.id if rider else None
+
+        queryset = Parcel.objects.all()
+        if (user.role.id==1 or user.role.id==2) and delivery_status_id:
+             queryset = queryset.filter(delivery_status_id=delivery_status_id)
+        if user.role.id==3 and delivery_status_id and merchant_id:
+            queryset = queryset.filter(delivery_status_id=delivery_status_id,merchant_id=merchant_id)
+        
+        if user.role.id==4 and delivery_status_id and rider_id:
+               queryset = queryset.filter(
+                models.Q(pickup_driver_id=rider_id) |
+                models.Q(driver_id=rider_id) |
+                models.Q(return_driver_id=rider_id)
+            )
+
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
 
 ####### Custom view #######
 # from rest_framework import status
@@ -88,7 +121,7 @@ class RiderParcelUpdate(generics.UpdateAPIView):
 #             )
 
 #         return Response('Updated successfully')
-from rest_framework.views import APIView
+
 from rest_framework.response import Response
 from rest_framework import status
 from parcels.serializers import ViewParcelSerializer

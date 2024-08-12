@@ -50,7 +50,7 @@ class ParcelSummarybyStatus(APIView):
                     return Response({'error': 'Invalid user ID'}, status=400)
 
                 # Filter parcels by user ID and annotate delivery status with count of related parcels
-                status_counts = DeliveryStatus.objects.filter(parcel__user_id=user_id).annotate(parcel_count=Count('parcel')).values('id', 'status', 'parcel_count')
+                status_counts = DeliveryStatus.objects.filter(parcel__user_id=user_id).annotate(parcel_count=Count('parcel')).values('id', 'status','image', 'parcel_count')
             else:
                 return Response({'error': 'User ID is required for filtering'}, status=400)
 

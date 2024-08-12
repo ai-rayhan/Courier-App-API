@@ -1,6 +1,6 @@
 from django.urls import path
 from merchants.views.merchants import ShopList,ShopByMerchant,UpdateShop,MerchantActivate,Merchants,MerchantDetails
-from merchants.views.merchant_package import PackageListByStatus,PackageListByVoucherId,ParcelList
+# from merchants.views.merchant_package import PackageListByStatus,PackageListByVoucherId,ParcelList
 # create_merchant, update_merchant,
 urlpatterns = [
     # path('create/', create_merchant, name='create_merchant'),
@@ -13,7 +13,7 @@ urlpatterns = [
     path('allshop/', ShopList.as_view(),name='allshop'),
     path('shop-update/<int:pk>/', UpdateShop.as_view()),
     path('shop/', ShopByMerchant.as_view(),name='shops-merchants'),
-    path('parcels/', ParcelList.as_view(), name='parcel-listby-status'),
-    path('parcels-status/', PackageListByStatus.as_view(), name='parcel-listby-status'),
-    path('parcel-id/', PackageListByVoucherId.as_view(), name='parcel-listby-id'),
+    # path('parcels/', ParcelList.as_view(), name='parcel-listby-status'),
+    # path('parcels-status/', PackageListByStatus.as_view(), name='parcel-listby-status'),
+    # path('parcel-id/', PackageListByVoucherId.as_view(), name='parcel-listby-id'),
 ]

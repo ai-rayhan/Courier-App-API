@@ -36,10 +36,16 @@ class MerchantDetails(APIView):
         except Merchant.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
+class UpdateMerchant(generics.RetrieveUpdateAPIView):
+    queryset = Merchant.objects.all()
+    serializer_class = MerchantSerializer
+    permission_classes = [IsAuthenticated]
+
+    
 class MerchantActivate(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def update(self, request):
         merchant_ids = request.data.get('merchant_ids')
         status = request.data.get('status')
 
@@ -53,6 +59,8 @@ class MerchantActivate(APIView):
             User.objects.filter(id__in=user_ids).update(role=3)
 
         return Response('Updated successfully')
+    
+
 #########################################################
 
 class ShopList(generics.ListCreateAPIView):

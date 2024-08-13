@@ -13,6 +13,10 @@ class RiderList(generics.ListCreateAPIView):
     queryset = Rider.objects.all()
     serializer_class = RidersSerializer
     permission_classes = [IsAuthenticated]
+class UpdateRider(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Rider.objects.all()
+    serializer_class = RidersSerializer
+    permission_classes = [IsAuthenticated]
 
 class RiderDetails(APIView):
     permission_classes = [IsAuthenticated]

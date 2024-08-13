@@ -21,4 +21,4 @@ class ParcelStatusTrackingListView(APIView):
     def get(self, request, voucher_id):
         status_trackings = StatusTracking.objects.filter(parcel__voucher_id=voucher_id)
         serializer = StatusTrackingSerializer(status_trackings, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK) 

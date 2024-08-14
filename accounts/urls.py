@@ -1,7 +1,7 @@
 from django.urls import path
 from accounts.views.money_receipt import MoneyReceiptList,MoneyReceiptDetail
 from accounts.views.ledger import LedgerList,LedgerDetail
-from accounts.views.merchant_payment import MerchantPaymentDetail,MerchantPaymentList
+from accounts.views.merchant_payment import MerchantPaymentDetail,MerchantPaymentList,PaymentListByMerchant
 from accounts.views.driver_payment import DriverPaymentDetail,DriverPaymentList
 
 urlpatterns = [
@@ -16,4 +16,5 @@ urlpatterns = [
 
     path('merchant-payment/', MerchantPaymentList.as_view(), name='merchant-payment-list'),
     path('merchant-payment/<int:pk>/', MerchantPaymentDetail.as_view(), name='merchant-payment-detail'),
+    path('payment-by-merchant/<int:merchantid>/', PaymentListByMerchant.as_view(), name='payment-by-merchant'),
 ]

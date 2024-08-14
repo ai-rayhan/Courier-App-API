@@ -9,10 +9,6 @@ class MerchantPaymentList(generics.ListCreateAPIView):
     queryset = MerchantPayment.objects.all()
     serializer_class = MerchantPaymentSerializer
     permission_classes = [IsAuthenticated]
-    def get_permissions(self):
-        if self.request.method  in ['POST']:
-            return [IsAuthenticated(), IsSuperUserORAdmin()]  
-        return super().get_permissions() 
 
 class MerchantPaymentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = MerchantPayment.objects.all()
@@ -22,3 +18,12 @@ class MerchantPaymentDetail(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ['DELETE', 'PUT']:
             return [IsAuthenticated(), IsSuperUserORAdmin()]
         return super().get_permissions()
+    
+
+class PaymentListByMerchant(generics.ListAPIView):
+    serializer_class = MerchantPaymentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        merchant_id = self.kwargs.get('merchantid')
+        return MerchantPayment.objects.filter(merchant_id=merchant_id)

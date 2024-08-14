@@ -20,8 +20,8 @@ class Parcel(models.Model):
     pickup_zone = models.ForeignKey(PickupZone, on_delete=models.CASCADE)
     delivery_zone = models.ForeignKey(DeliveryZone, on_delete=models.CASCADE)
     issue = models.IntegerField(null=True, blank=True)
-    payment_status = models.SmallIntegerField(default=1,help_text='0=pending and 1=payment')
-    driver_payment_status = models.SmallIntegerField(default=1,help_text='0=pending and 1=payment')
+    payment_status = models.SmallIntegerField(default=0,db_comment='0=pending and 1=payment')
+    driver_payment_status = models.SmallIntegerField(default=0,db_comment='0=pending and 1=payment')
    
     voucher_id = models.CharField(max_length=30,blank=True)
     delivery_charge = models.DecimalField(max_digits=8, decimal_places=2)

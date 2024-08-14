@@ -1,5 +1,5 @@
 from django.urls import path
-from parcels.views.parcels import ParcelUpdate,ParcelList,UpdateParcelStatus,RiderParcelUpdate,ParcelDetailView,GetParcels
+from parcels.views.parcels import ParcelUpdate,ParcelList,UpdateParcelStatus,RiderParcelUpdate,ParcelDetailView,GetParcels,MakeMerchantPayment,MakeRiderPayment
 from parcels.views.issues import IssueList,IssueDetail
 from parcels.views.parcel_details import ParcelItemList,ParcelItemUpdate
 from parcels.views.return_parcels import ReturnParcelList,ReturnParcelDetail
@@ -18,6 +18,9 @@ urlpatterns = [
     path('parceldetails/<int:pk>/', ParcelItemUpdate.as_view(), name='parceldetails-detail'),
 
     path('update-status/', UpdateParcelStatus.as_view(), name='update-parcel'),
+
+    path('merchant-payment/', MakeMerchantPayment.as_view(), name='merchant-payment'),
+    path('rider-payment/', MakeRiderPayment.as_view(), name='rider-payment'),
     
     path('returnparcel/', ReturnParcelList.as_view(), name='returnparcel-list'),
     path('returnparcel/<int:pk>/', ReturnParcelDetail.as_view(), name='returnparcel-detail'),

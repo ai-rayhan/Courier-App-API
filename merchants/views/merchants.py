@@ -45,7 +45,7 @@ class UpdateMerchant(generics.RetrieveUpdateAPIView):
 class MerchantActivate(APIView):
     permission_classes = [IsAuthenticated]
 
-    def update(self, request):
+    def put(self, request):
         merchant_ids = request.data.get('merchant_ids')
         status = request.data.get('status')
 

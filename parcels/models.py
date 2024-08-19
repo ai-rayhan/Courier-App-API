@@ -24,6 +24,7 @@ class Parcel(models.Model):
     driver_payment_status = models.SmallIntegerField(default=0,db_comment='0=pending and 1=payment')
    
     voucher_id = models.CharField(max_length=30,blank=True)
+    delivery_type = models.ForeignKey('admin_settings.deliveryTimes', on_delete=models.CASCADE,default=1)
     delivery_charge = models.DecimalField(max_digits=8, decimal_places=2)
     delivery_address = models.TextField()
     pickup_address = models.TextField(null=True, blank=True)

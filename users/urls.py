@@ -8,7 +8,7 @@ urlpatterns = [
     path('updateprofile/',UserProfileUpdate.as_view(), name='update_profile'),
     path('send-otp/', SendOTP.as_view(), name='send_otp'),
     path('verify-otp-password/', VerifyOTPAndChangePassword.as_view(), name='verify_otp_password'),
-    path('verifyphone-otp/', VerifyOTP.as_view(), name='verify_otp'),
+    path('verify-otp/', VerifyOTP.as_view(), name='verify_otp'),
     path('deactivate-user/', DeactivatedUser.as_view(), name='activate-user'),
     # path('addrole/', add_role),
     # path('updaterole/<int:pk>/', update_role),

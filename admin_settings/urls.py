@@ -2,6 +2,7 @@ from django.urls import path
 from admin_settings.views.delivery_times import DeliveryTimesList,DeliveryTimesDetail
 from admin_settings.views.delivery_status import DeliveryStatusList,DeliveryStatusDetail,ParcelSummarybyStatus
 from admin_settings.views.product_type import ProductTypeList,ProductTypeDetail
+from admin_settings.views.sms_provider import SmsProviderList,SmsProviderDetail
 
 urlpatterns = [
     path('delivery-time/', DeliveryTimesList.as_view(), name='deliverytime-list'),
@@ -14,5 +15,7 @@ urlpatterns = [
     path('delivery-status/<int:pk>/', DeliveryStatusDetail.as_view(), name='deliverystatus-detail'),
     path('ds-parcel-count/', ParcelSummarybyStatus.as_view(), name='deliverystatus-count-parcel'),
     
+    path('sms-provider/', SmsProviderList.as_view(), name='sms-list'),
+    path('sms-provider/<int:pk>/', SmsProviderDetail.as_view(), name='sms-detail'),
 
 ]

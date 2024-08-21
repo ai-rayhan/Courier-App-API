@@ -44,6 +44,20 @@ class ViewParcelSerializer(serializers.ModelSerializer):
         model = Parcel
         fields = '__all__'
 
+# serializers.py
+from rest_framework import serializers
+
+class ParcelSummarySerializer(serializers.Serializer):
+    total_parcel = serializers.IntegerField()
+    approved = serializers.IntegerField()
+    delivery = serializers.IntegerField()
+    partial = serializers.IntegerField()
+    return_returned = serializers.IntegerField()
+    parcel_price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    cash_collection = serializers.DecimalField(max_digits=10, decimal_places=2)
+    merchant_paid = serializers.DecimalField(max_digits=10, decimal_places=2)
+    delivery_charge = serializers.DecimalField(max_digits=10, decimal_places=2)
+
 class ParcelItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParcelItem

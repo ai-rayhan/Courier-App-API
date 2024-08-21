@@ -43,6 +43,13 @@ def create_initial_product_type(apps, schema_editor):
         ProductType(title='Furniture'),
     ])
 
+def create_initial_sms_provider(apps, schema_editor):
+   SmsProvider = apps.get_model('admin_settings', 'SmsProvider')
+   SmsProvider.objects.bulk_create([
+        SmsProvider(sms_provider='twilio'),
+        SmsProvider(sms_provider='bulksms'),
+    ])
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -51,6 +58,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(create_initial_delivery_status),
+        migrations.RunPython(create_initial_sms_provider),
         # migrations.RunPython(create_initial_delivery_times),
         migrations.RunPython(create_initial_product_type),
     ]

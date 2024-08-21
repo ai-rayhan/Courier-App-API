@@ -4,6 +4,7 @@ from parcels.views.issues import IssueList,IssueDetail
 from parcels.views.parcel_details import ParcelItemList,ParcelItemUpdate
 from parcels.views.return_parcels import ReturnParcelList,ReturnParcelDetail
 from parcels.views.status_tracking import ParcelStatusTrackingListView
+from parcels.views.parcel_summary import MerchantParcelSummaryView
 # StatusTrackingList,StatusTrackingDetail,
 
 urlpatterns = [
@@ -30,6 +31,7 @@ urlpatterns = [
 
     # path('status-tracking/', StatusTrackingList.as_view(), name='statustracking-list'),
     # path('status-tracking/<int:pk>/', StatusTrackingDetail.as_view(), name='statustracking-detail'),
+    path('merchant-parcel-summary/<int:merchant_id>/', MerchantParcelSummaryView.as_view(), name='merchant-parcel-summary'),
 
     path('tracking/<str:voucher_id>/', ParcelStatusTrackingListView.as_view(), name='statustracking-list'),
 

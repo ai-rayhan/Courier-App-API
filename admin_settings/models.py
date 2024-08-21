@@ -45,3 +45,29 @@ class DeliveryStatus(models.Model):
     class Meta:
         db_table = 'delivery_statuses'
 
+
+class SmsProvider(models.Model):
+    sms_provider = models.CharField(max_length=20, default='')
+    account_sid = models.CharField(max_length=40, blank=True, null=True)
+    auth_token = models.CharField(max_length=40, blank=True, null=True)
+    from_number = models.CharField(max_length=20, blank=True, null=True)
+    api_key = models.CharField(max_length=40, blank=True, null=True)
+    sender_id = models.CharField(max_length=20, blank=True, null=True)
+    status = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'sms_provider'
+
+        
+
+
+class PaymentServiceProvider(models.Model):
+    payment_service_provider = models.CharField(max_length=20, default='')
+    account_sid = models.CharField(max_length=40, blank=True, null=True)
+    auth_token = models.CharField(max_length=40, blank=True, null=True)
+    from_number = models.CharField(max_length=20, blank=True, null=True)
+    api_key = models.CharField(max_length=40, blank=True, null=True)
+    sender_id = models.CharField(max_length=20, blank=True, null=True)
+
+    class Meta:
+        db_table = 'payment_service_provider'

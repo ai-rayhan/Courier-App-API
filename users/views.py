@@ -157,33 +157,33 @@ def get_permissions(request):
     return JsonResponse({'permissions': filtered_permission_data})
 ################################# OTP Section ###############################################
 
-class SendOTP(APIView):
-    def post(self, request):
-        phone_number = request.data.get('phone_number')
-        user = User.objects.filter(phone_number=phone_number).first()
+# class SendOTP(APIView):
+#     def post(self, request):
+#         phone_number = request.data.get('phone_number')
+#         user = User.objects.filter(phone_number=phone_number).first()
         
-        if not user:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+#         if not user:
+#             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        # Generate OTP
-        otp = random.randint(100000, 999999)
-        otp_str = str(otp)
+#         # Generate OTP
+#         otp = random.randint(100000, 999999)
+#         otp_str = str(otp)
 
-        response = OTPSender.send_otp(phone_number, otp_str+" Don't share it another")
-        print(response.text)
-        if response.status_code == 200:
-            json_response = response.json()
-            response_code = json_response.get("response_code")
-            error_message = json_response.get("error_message")
+#         response = OTPSender.send_otp(phone_number, otp_str+" Don't share it another")
+#         print(response.text)
+#         if response.status_code == 200:
+#             json_response = response.json()
+#             response_code = json_response.get("response_code")
+#             error_message = json_response.get("error_message")
 
-            if response_code == 202:
-                # Save OTP to database
-                OTP.objects.create(user=user, otp=str(otp))
-                return Response({"message": "OTP sent successfully."}, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "Failed to send OTP", "details": error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            return Response({"error": "Failed to send OTP"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#             if response_code == 202:
+#                 # Save OTP to database
+#                 OTP.objects.create(user=user, otp=str(otp))
+#                 return Response({"message": "OTP sent successfully."}, status=status.HTTP_200_OK)
+#             else:
+#                 return Response({"error": "Failed to send OTP", "details": error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#         else:
+#             return Response({"error": "Failed to send OTP"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
 class VerifyOTPAndChangePassword(APIView):
@@ -349,3 +349,54 @@ class RoleDetail(generics.RetrieveUpdateDestroyAPIView):
 #             return custom_response(data=serializer.data, status=status.HTTP_201_CREATED)
 #         return custom_response(error=serializer.errors, status=status.HTTP_400_BAD_REQUEST, success=False)
 
+
+import random
+from django.shortcuts import get_object_or_404
+from admin_settings.models import SmsProvider
+from users.models import OTP, User
+from users.sms_providers import BulkSMSSMSProvider, TwilioSMSProvider, get_sms_provider_credentials
+
+
+
+class SendOTP(APIView):
+    def post(self, request):
+        phone_number = request.data.get('phone_number')
+        user = get_object_or_404(User, phone_number=phone_number)
+
+        # Generate OTP
+        otp = random.randint(100000, 999999)
+        otp_str = str(otp)
+
+        # Choose SMS provider
+        provider_name = request.data.get('provider', 'twilio')
+        credentials = get_sms_provider_credentials(provider_name)
+
+        if not credentials:
+            return Response({"error": "Invalid SMS provider."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if provider_name == 'twilio':
+            sms_provider = TwilioSMSProvider(
+                account_sid=credentials['account_sid'],
+                auth_token=credentials['auth_token'],
+                from_number=credentials['from_number']
+            )
+        elif provider_name == 'bulksms':
+            sms_provider = BulkSMSSMSProvider(
+                api_key=credentials['api_key'],
+                sender_id=credentials['sender_id']
+            )
+        else:
+            return Response({"error": "Invalid SMS provider."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Send OTP via chosen provider
+        message = f"Your OTP is {otp_str}. Don't share it with anyone."
+        response = sms_provider.send_sms(phone_number, message)
+        response_status = response.get('status', None)
+        status_code = response.get('status_code', None)
+
+        if status_code in [200, 201, 202, 204] or response_status in ['queued', 'sent', 'delivered', 'success']:
+            # Save OTP to the database
+            OTP.objects.create(user=user, otp=otp_str)
+            return Response({"message": "OTP sent successfully.", "details": response}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Failed to send OTP", "details": response}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

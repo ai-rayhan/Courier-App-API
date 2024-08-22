@@ -186,23 +186,17 @@ def get_permissions(request):
 #             return Response({"error": "Failed to send OTP"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
-class VerifyOTPAndChangePassword(APIView):
+class ChangePassword(APIView):
     def post(self, request):
         phone_number = request.data.get('phone_number')
-        otp_provided = request.data.get('otp')
         new_password = request.data.get('new_password')
-
         user = User.objects.filter(phone_number=phone_number).first()
         if not user:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        otp_record = OTP.objects.filter(user=user).order_by('-timestamp').first()
-        if otp_record and otp_record.is_valid() and otp_record.otp == otp_provided:
+        else:
             user.set_password(new_password)
             user.save()
-            otp_record.delete()  # Clear OTP after use
             return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
-        return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
 class VerifyOTP(APIView):
     def post(self, request):
@@ -356,7 +350,11 @@ from admin_settings.models import SmsProvider
 from users.models import OTP, User
 from users.sms_providers import BulkSMSSMSProvider, TwilioSMSProvider, get_sms_provider_credentials
 
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+import random
 
 class SendOTP(APIView):
     def post(self, request):
@@ -367,26 +365,28 @@ class SendOTP(APIView):
         otp = random.randint(100000, 999999)
         otp_str = str(otp)
 
-        # Choose SMS provider
-        provider_name = request.data.get('provider', 'twilio')
-        credentials = get_sms_provider_credentials(provider_name)
+        # Get SMS provider credentials (assuming only one active provider)
+        credentials = get_sms_provider_credentials()
 
         if not credentials:
-            return Response({"error": "Invalid SMS provider."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "SMS provider credentials not found."}, status=status.HTTP_400_BAD_REQUEST)
 
-        if provider_name == 'twilio':
+        # Determine the SMS provider based on the available credentials
+        if credentials.get('account_sid') and credentials.get('auth_token'):
+            # Twilio provider assumed
             sms_provider = TwilioSMSProvider(
                 account_sid=credentials['account_sid'],
                 auth_token=credentials['auth_token'],
                 from_number=credentials['from_number']
             )
-        elif provider_name == 'bulksms':
+        elif credentials.get('api_key') and credentials.get('sender_id'):
+            # BulkSMS provider assumed
             sms_provider = BulkSMSSMSProvider(
                 api_key=credentials['api_key'],
                 sender_id=credentials['sender_id']
             )
         else:
-            return Response({"error": "Invalid SMS provider."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Invalid SMS provider credentials."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Send OTP via chosen provider
         message = f"Your OTP is {otp_str}. Don't share it with anyone."

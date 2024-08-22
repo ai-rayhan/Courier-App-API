@@ -63,9 +63,9 @@ class BulkSMSSMSProvider(BaseSMSProvider):
                 'error': response.text
             }
         
-def get_sms_provider_credentials(provider_name):
+def get_sms_provider_credentials():
     try:
-        provider = SmsProvider.objects.get(sms_provider=provider_name)
+        provider = SmsProvider.objects.get(status=True)
         return {
             'account_sid': provider.account_sid,
             'auth_token': provider.auth_token,

@@ -3,7 +3,7 @@ asgiref
 certifi
 cffi
 charset-normalizer
-Django
+Django==4.2.0
 djangorestframework
 djangorestframework-simplejwt
 idna

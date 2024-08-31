@@ -3,6 +3,7 @@ from admin_settings.views.delivery_times import DeliveryTimesList,DeliveryTimesD
 from admin_settings.views.delivery_status import DeliveryStatusList,DeliveryStatusDetail,ParcelSummarybyStatus
 from admin_settings.views.product_type import ProductTypeList,ProductTypeDetail
 from admin_settings.views.sms_provider import SmsProviderList,SmsProviderDetail
+from admin_settings.views.payment_settings import PaymentSettingsAPIView
 
 urlpatterns = [
     path('delivery-time/', DeliveryTimesList.as_view(), name='deliverytime-list'),
@@ -17,5 +18,6 @@ urlpatterns = [
     
     path('sms-provider/', SmsProviderList.as_view(), name='sms-list'),
     path('sms-provider/<int:pk>/', SmsProviderDetail.as_view(), name='sms-detail'),
+    path('payment-settings/', PaymentSettingsAPIView.as_view(), name='payment-settings'),
 
 ]

@@ -71,3 +71,18 @@ class PaymentServiceProvider(models.Model):
 
     class Meta:
         db_table = 'payment_service_provider'
+
+class PaymentSettings(models.Model):
+    # Merchant-related settings
+    pre_delivery_payment = models.BooleanField(default=False)
+    delivery_charge_deducted_from_cod = models.BooleanField(default=True)
+    payment_before_sending_package = models.BooleanField(default=False)
+
+    # Rider-related settings
+    base_commission = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    distance_coefficient = models.DecimalField(max_digits=5, decimal_places=2, default=1.00)
+    cod_coefficient = models.DecimalField(max_digits=5, decimal_places=2, default=1.00)
+    salary_mode = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'payment_settings'

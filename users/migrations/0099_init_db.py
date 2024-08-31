@@ -47,6 +47,7 @@ def create_initial_user(apps, schema_editor):
             is_superuser=True,
             is_admin=True,
             is_staff=True,
+            is_phone_verified=True,
         ),
         User(
             email='rider@gmail.com',
@@ -57,6 +58,7 @@ def create_initial_user(apps, schema_editor):
             is_superuser=False,
             is_admin=False,
             is_staff=True,
+            is_phone_verified=True,
         ),
         User(
             email='merchant@gmail.com',
@@ -67,6 +69,7 @@ def create_initial_user(apps, schema_editor):
             is_superuser=False,
             is_admin=False,
             is_staff=True,
+            is_phone_verified=True,
         ),
     ]
     

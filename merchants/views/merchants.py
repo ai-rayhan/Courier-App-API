@@ -13,7 +13,10 @@ class Merchants(generics.ListCreateAPIView):
     queryset = Merchant.objects.all()
     serializer_class = MerchantSerializer
     permission_classes = [IsAuthenticated]
-
+class UpdateMerchant(generics.RetrieveUpdateAPIView):
+    queryset = Merchant.objects.all()
+    serializer_class = MerchantSerializer
+    permission_classes = [IsAuthenticated]
 class MerchantDetails(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -36,10 +39,7 @@ class MerchantDetails(APIView):
         except Merchant.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-class UpdateMerchant(generics.RetrieveUpdateAPIView):
-    queryset = Merchant.objects.all()
-    serializer_class = MerchantSerializer
-    permission_classes = [IsAuthenticated]
+
 
     
 class MerchantActivate(APIView):

@@ -50,9 +50,10 @@ class GetParcels(APIView):
         
         if user.role.id==4 and delivery_status_id and rider_id:
                queryset = queryset.filter(
-                models.Q(pickup_driver_id=rider_id) |
+                (models.Q(pickup_driver_id=rider_id) |
                 models.Q(driver_id=rider_id) |
-                models.Q(return_driver_id=rider_id)
+                models.Q(return_driver_id=rider_id)) and
+                models.Q(delivery_status_id=delivery_status_id)
             )
 
         serializer = self.serializer_class(queryset, many=True)

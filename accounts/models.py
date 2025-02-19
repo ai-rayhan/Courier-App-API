@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -46,6 +47,7 @@ class RiderPayment(models.Model):
     total_cod = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     total_delivery_charge = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     total_commission = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    created_by = models.CharField(max_length=55)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -61,14 +63,14 @@ class MerchantPayment(models.Model):
     total_parcel = models.IntegerField()
     voucher_id = models.CharField(max_length=255,)
     invoice_id = models.CharField(max_length=255, null=True, blank=True)
-    payment_method = models.ForeignKey("bank.PaymentMethod", on_delete=models.CASCADE,null=True)
-    # method_payment = models.TextField(null=True, blank=True)
+    payment_to = models.ForeignKey("bank.BankInformation", on_delete=models.CASCADE,null=True)
     payment_info = models.TextField(null=True, blank=True)
     note = models.CharField(max_length=255, null=True, blank=True)
     total_payment = models.DecimalField(max_digits=8, decimal_places=2)
     total_charge = models.DecimalField(max_digits=8, decimal_places=2)
     total_cod = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     total_parcel_amount = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    created_by = models.CharField(max_length=55)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 

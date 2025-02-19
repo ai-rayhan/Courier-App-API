@@ -1,0 +1,37 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Django
+*.sqlite3
+db.sqlite3
+*.log
+# media/
+# staticfiles/
+
+# Environment
+venv/
+venv_*/
+ENV/
+env/
+*.env
+*.venv
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+config.bat
+node_modules
